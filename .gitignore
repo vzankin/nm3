@@ -361,3 +361,10 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# temp and local-only folders and files
+/!bin
+/!obj
+/!publish
+/.vs
+/**/*.user

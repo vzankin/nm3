@@ -1,0 +1,21 @@
+<Project>
+
+  <PropertyGroup>
+    <Company>CompEd Software Design</Company>
+    <Product>nm3</Product>
+    <Authors>Vladimir Zankin</Authors>
+    <Platforms>AnyCPU;x64;x86</Platforms>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>CompEd.Nm.Net</RootNamespace>	
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <BaseOutputPath>$(SolutionDir)!bin\</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(SolutionDir)!obj\</BaseIntermediateOutputPath>
+    <MSBuildProjectExtensionsPath>$(SolutionDir)!obj\$(Configuration)\$(MSBuildProjectName)</MSBuildProjectExtensionsPath>	
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+  
+</Project>
