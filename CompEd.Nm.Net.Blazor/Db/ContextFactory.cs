@@ -17,12 +17,10 @@ public class ContextFactory
 
     public async Task<CacheContext> CreateCacheContext(Model.Mailbox mailbox, CancellationToken ct)
     {
+        var csb = new SqliteConnectionStringBuilder();
         var folder = mailbox.Folder ?? Path.Combine(settings.RootFolder, mailbox.Name);
-
         if (!Directory.Exists(folder))
             Directory.CreateDirectory(folder);
-
-        var csb = new SqliteConnectionStringBuilder();
         csb.DataSource = Path.Combine(folder, "cache.db");
 
         var ob = new DbContextOptionsBuilder<CacheContext>();

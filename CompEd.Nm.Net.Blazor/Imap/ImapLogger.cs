@@ -1,5 +1,4 @@
 ﻿using MailKit;
-using Microsoft.Extensions.Logging;
 using System.Text;
 
 namespace CompEd.Nm.Net.Imap;
@@ -23,14 +22,8 @@ public sealed class ImapLogger : IProtocolLogger
 
     public void LogConnect(Uri uri) =>
         log?.LogDebug("connect: '{uri}'", uri.OriginalString);
-    public void LogServer(byte[] buffer, int offset, int count)
-    {
-        if (log?.IsEnabled(LogLevel.Trace) == true)
-            log?.LogTrace("rcv: {msg}", Encoding.ASCII.GetString(buffer.AsSpan(offset, count)).TrimEnd());
-    }
-    public void LogClient(byte[] buffer, int offset, int count)
-    {
-        if (log?.IsEnabled(LogLevel.Trace) == true)
-            log?.LogTrace("snd: {msg}", Encoding.ASCII.GetString(buffer.AsSpan(offset, count)).TrimEnd());
-    }
+    public void LogServer(byte[] buffer, int offset, int count) =>
+        log?.LogTrace("rcv: {msg}", Encoding.ASCII.GetString(buffer.AsSpan(offset, count)).TrimEnd());
+    public void LogClient(byte[] buffer, int offset, int count) =>
+        log?.LogTrace("snd: {msg}", Encoding.ASCII.GetString(buffer.AsSpan(offset, count)).TrimEnd());
 }

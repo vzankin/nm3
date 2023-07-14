@@ -9,8 +9,4 @@ public class CacheContext : DbContext
     public CacheContext(DbContextOptions<CacheContext> opt) : base(opt)
     {
     }
-
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
-    }
 }

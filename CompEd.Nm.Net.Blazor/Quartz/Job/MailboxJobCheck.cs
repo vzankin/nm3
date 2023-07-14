@@ -67,7 +67,7 @@ internal partial class MailboxJobCheck : MailboxJob
         // 8. get UIDs to add to local cache (ones that present on remote server but not in local cache)
         var uidsToAdd = uidsRemote.Except(uidsLocal);
 
-        // 9. check incoming emails:
+        // 9. check incoming emails (by 100 items):
         foreach (var uidsBatch in uidsToAdd.Chunk(100))
         {
             // 9.1 fetch email headers
