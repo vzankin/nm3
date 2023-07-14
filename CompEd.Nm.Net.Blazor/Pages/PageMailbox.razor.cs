@@ -13,12 +13,6 @@ public partial class PageMailbox : IDisposable
     public required MainContext Db { get; set; }
 
     [Inject]
-    public required ILoggerFactory LoggerFactory { get; set; }
-
-    [Inject]
-    public required IOptions<Settings> Settings { get; set; }
-
-    [Inject]
     public required ContextFactory CacheFactory { get; set; }
 
     public required Db.Model.Mailbox Mailbox { get; set; }
