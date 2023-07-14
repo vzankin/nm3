@@ -4,62 +4,6 @@ using CompEd.Nm.Net.Imap;
 using Microsoft.Extensions.Logging.EventLog;
 using Quartz;
 
-#region FILL TEST MAILBOXES
-// test data
-//CompEd.Nm.Net.Db.Model.Mailbox[] Mailboxes = {
-//    new()
-//    {
-//        Name = "vladimir.zankin@hotmail.com",
-//        ImapHost  = "outlook.office365.com",
-//        ImapPort = 993,
-//        ImapUsername = "vladimir.zankin@hotmail.com",
-//        ImapPassword = "ixbrfrugphendseq",
-//        IsWatchEnabled = true,
-//        IsCleanEnabled = false,
-//        Folder = @"d:\test\nm2\vladimir.zankin@hotmail.com",
-//    },
-//    new()
-//    {
-//        Name = "test_A@actalispec.it",
-//        ImapHost  = "imap.pec.actalis.it",
-//        ImapPort = 993,
-//        ImapUsername = "test_A@actalispec.it",
-//        ImapPassword = "Pas$1234",
-//        IsWatchEnabled = true,
-//        IsCleanEnabled = false,
-//        Folder = @"d:\test\nm2\test_A@actalispec.it",
-//    },
-//    new()
-//    {
-//        Name = "test_B@actalispec.it",
-//        ImapHost  = "imap.pec.actalis.it",
-//        ImapPort = 993,
-//        ImapUsername = "test_B@actalispec.it",
-//        ImapPassword = "Pas$1234",
-//        IsWatchEnabled = true,
-//        IsCleanEnabled = false,
-//        Folder = @"d:\test\nm2\test_B@actalispec.it",
-//    },
-//};
-
-//// perpare connection string
-//var root = @"c:\ProgramData\CompEd\Nm.Net";
-
-//// create folder
-//if (!Directory.Exists(root))
-//    Directory.CreateDirectory(root);
-
-//// fill test data
-//var ob = new DbContextOptionsBuilder<MainContext>();
-//using (var db = new MainContext(new Microsoft.Extensions.Options.OptionsWrapper<Settings>(new Settings()), ob.Options))
-//{
-//    await db.Database.EnsureDeletedAsync();
-//    await db.Database.EnsureCreatedAsync();
-//    await db.Mailboxes.AddRangeAsync(Mailboxes);
-//    await db.SaveChangesAsync();
-//}
-#endregion FILL TEST MAILBOXES
-
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
