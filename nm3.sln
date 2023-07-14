@@ -5,9 +5,7 @@ VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompEd.Nm.Net.App", "CompEd.Nm.Net.App\CompEd.Nm.Net.App.csproj", "{32ADEB58-AE1C-4A69-A7B8-C8CE016F237F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompEd.Nm.Net.Blazor01", "CompEd.Nm.Net.Blazor01\CompEd.Nm.Net.Blazor01.csproj", "{AC58B80C-7A9D-4B09-BE7F-218C648CB704}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompEd.Nm.Net.Blazor", "CompEd.Nm.Net.Blazor\CompEd.Nm.Net.Blazor.csproj", "{2F254E67-0862-4E9F-B583-75192A0A7897}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompEd.Nm.Net.Blazor", "CompEd.Nm.Net.Blazor\CompEd.Nm.Net.Blazor.csproj", "{2F254E67-0862-4E9F-B583-75192A0A7897}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +17,6 @@ Global
 		{32ADEB58-AE1C-4A69-A7B8-C8CE016F237F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32ADEB58-AE1C-4A69-A7B8-C8CE016F237F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32ADEB58-AE1C-4A69-A7B8-C8CE016F237F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AC58B80C-7A9D-4B09-BE7F-218C648CB704}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AC58B80C-7A9D-4B09-BE7F-218C648CB704}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AC58B80C-7A9D-4B09-BE7F-218C648CB704}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AC58B80C-7A9D-4B09-BE7F-218C648CB704}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2F254E67-0862-4E9F-B583-75192A0A7897}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2F254E67-0862-4E9F-B583-75192A0A7897}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F254E67-0862-4E9F-B583-75192A0A7897}.Release|Any CPU.ActiveCfg = Release|Any CPU

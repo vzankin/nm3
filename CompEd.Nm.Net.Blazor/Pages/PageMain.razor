@@ -1,0 +1,26 @@
+﻿@page "/"
+
+@inject NavigationManager Navigation
+
+<PageTitle>Notification Monitor 2.0</PageTitle>
+
+<h1>Notification Monitor 2.0</h1>
+
+<h2>Settings</h2>
+<ul>
+    <li><b>Root folder:</b>&nbsp;@Settings.Value.RootFolder</li>
+</ul>
+
+<h2>Mailboxes</h2>
+<ul>
+    @foreach (var mailbox in Db.Mailboxes)
+    {
+        <li><a href="mailbox/@mailbox.Id">@mailbox.Name</a></li>
+    }
+</ul>
+
+
+@code
+{
+
+}
