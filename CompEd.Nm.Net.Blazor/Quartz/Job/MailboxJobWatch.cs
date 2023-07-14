@@ -35,29 +35,17 @@ internal class MailboxJobWatch : MailboxJob
 
         void callback(object? sender, EventArgs args) => time.Cancel();
 
-        try
-        {
-            log?.LogTrace("+IDLE");
-            imap.Inbox.CountChanged += callback;
-            await imap.IdleAsync(done.Token).ConfigureAwait(false);
-        }
-        finally
-        {
-            imap.Inbox.CountChanged -= callback;
-            log?.LogTrace("-IDLE");
-        }
+        log?.LogTrace("{mailbox}: +IDLE", Monitor.Mailbox.Name);
+        imap.Inbox.CountChanged += callback;
+        await imap.IdleAsync(done.Token).ConfigureAwait(false);
+        imap.Inbox.CountChanged -= callback;
+        log?.LogTrace("{mailbox}: -IDLE", Monitor.Mailbox.Name);
     }
     private async Task Noop(ImapClient imap, CancellationToken ct)
     {
-        try
-        {
-            log?.LogTrace("+NOOP");
-            await imap.NoOpAsync(ct).ConfigureAwait(false);
-            await Task.Delay(TimeSpan.FromMinutes(1), ct).ConfigureAwait(false);
-        }
-        finally
-        {
-            log?.LogTrace("-NOOP");
-        }
+        log?.LogTrace("{mailbox}: +NOOP", Monitor.Mailbox.Name);
+        await imap.NoOpAsync(ct).ConfigureAwait(false);
+        await Task.Delay(TimeSpan.FromMinutes(1), ct).ConfigureAwait(false);
+        log?.LogTrace("{mailbox}: -NOOP", Monitor.Mailbox.Name);
     }
 }

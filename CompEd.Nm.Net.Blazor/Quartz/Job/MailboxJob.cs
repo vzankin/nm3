@@ -1,6 +1,8 @@
 ﻿using MailKit.Net.Imap;
 using MailKit;
 using Quartz;
+using CompEd.Nm.Net.Db.Model;
+using System.Xml.Linq;
 
 namespace CompEd.Nm.Net.Job;
 
@@ -45,9 +47,9 @@ internal abstract class MailboxJob : IJob, IDisposable
         }
         catch (Exception e)
         {
-            log?.LogWarning(e, "{mailbox}: {msg}. restarting...", Monitor.Mailbox.Name, e.InnerMessage());
+            log?.LogWarning("{mailbox}: {msg} restarting...", Monitor.Mailbox.Name, e.InnerMessage());
             await Task.Delay(TimeSpan.FromSeconds(10), ctx.CancellationToken).ConfigureAwait(false);
-            throw new JobExecutionException(true); // restart job
+            await ctx.Scheduler.TriggerJob(ctx.JobDetail.Key, ctx.MergedJobDataMap, ctx.CancellationToken).ConfigureAwait(false);
         }
         finally
         {
