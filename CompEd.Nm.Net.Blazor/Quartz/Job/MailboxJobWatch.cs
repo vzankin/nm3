@@ -17,14 +17,14 @@ internal class MailboxJobWatch : MailboxJob
             // ensure connected
             await ReconnectAsync(imap, ctx.CancellationToken).ConfigureAwait(false);
 
+            // trigger mailbox syncronizing job (MailboxJobCheck)
+            await Monitor!.TriggerCheck(ctx.CancellationToken).ConfigureAwait(false);
+
             // wait for mailbox changing event, or timeout (5 minutes for IDLE, 1 minute for NOOP)
             if (imap.Capabilities.HasFlag(ImapCapabilities.Idle))
                 await Idle(imap, ctx.CancellationToken).ConfigureAwait(false);
             else
                 await Noop(imap, ctx.CancellationToken).ConfigureAwait(false);
-
-            // trigger mailbox syncronizing job (MailboxJobCheck)
-            await Monitor!.TriggerCheck(ctx.CancellationToken).ConfigureAwait(false);
         }
     }
 

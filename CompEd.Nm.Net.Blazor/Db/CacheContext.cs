@@ -2,7 +2,7 @@
 
 namespace CompEd.Nm.Net.Db;
 
-internal class CacheContext : DbContext
+public class CacheContext : DbContext
 {
     public DbSet<Model.Mail> Mails { get; set; }
 

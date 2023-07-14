@@ -66,7 +66,7 @@ internal class MailboxMonitor : IAsyncDisposable
     }
     internal async Task Trigger(CancellationToken ct)
     {
-        var tasks = new List<Task> { TriggerCheck(ct) };
+        var tasks = new List<Task>();
         if (Mailbox.IsWatchEnabled == true)
             tasks.Add(TriggerWatch(ct));
         if (Mailbox.IsCleanEnabled == true)

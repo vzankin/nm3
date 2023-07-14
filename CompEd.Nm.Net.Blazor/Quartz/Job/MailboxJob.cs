@@ -34,14 +34,14 @@ internal abstract class MailboxJob : IJob, IDisposable
 
     public async Task Execute(IJobExecutionContext ctx)
     {
-        log?.LogDebug("{key} job has started.", ctx.JobDetail.Key);
+        log?.LogInformation("{key} job has started.", ctx.JobDetail.Key);
         try
         {
             await ExecuteInternal(ctx).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
-            log?.LogDebug("{key} job has cancelled.", ctx.JobDetail.Key);
+            log?.LogTrace("{key} job has cancelled.", ctx.JobDetail.Key);
         }
         catch (Exception e)
         {
@@ -51,7 +51,7 @@ internal abstract class MailboxJob : IJob, IDisposable
         }
         finally
         {
-            log?.LogDebug("{key} job has finished.", ctx.JobDetail.Key);
+            log?.LogInformation("{key} job has finished.", ctx.JobDetail.Key);
         }
     }
 

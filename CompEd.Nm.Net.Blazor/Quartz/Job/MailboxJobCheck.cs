@@ -18,12 +18,12 @@ namespace CompEd.Nm.Net.Job;
 internal partial class MailboxJobCheck : MailboxJob
 {
     private readonly Settings settings;
-    private readonly ILoggerFactory lf;
+    private readonly ContextFactory cf;
 
-    public MailboxJobCheck(IOptions<Settings> settings, ILoggerFactory lf, ImapClient imap, ILogger<MailboxJobCheck> log) : base(imap, log)
+    public MailboxJobCheck(IOptions<Settings> settings, ContextFactory cf, ImapClient imap, ILogger<MailboxJobCheck> log) : base(imap, log)
     {
         this.settings = settings.Value;
-        this.lf = lf;
+        this.cf = cf;
     }
 
     protected override async Task ExecuteInternal(IJobExecutionContext ctx)
@@ -35,7 +35,7 @@ internal partial class MailboxJobCheck : MailboxJob
         var folder = GetMailboxFolder();
 
         // 2. open database context
-        using var cache = await OpenCacheDb(folder, ctx.CancellationToken).ConfigureAwait(false);
+        using var cache = await cf.CreateCacheContext(Monitor.Mailbox, ctx.CancellationToken).ConfigureAwait(false);
 
         // 3. delete outdated UIDs from local cache (with unactual UidValidity)
         await cache.Mails
@@ -111,30 +111,10 @@ internal partial class MailboxJobCheck : MailboxJob
 
     private string GetMailboxFolder()
     {
-        var folder = Monitor.Mailbox.Folder;
-
-        if (string.IsNullOrEmpty(folder))
-            folder = Path.Combine(settings.RootFolder);
-
+        var folder = Monitor.Mailbox.Folder ?? Path.Combine(settings.RootFolder);
         if (!Directory.Exists(folder))
             Directory.CreateDirectory(folder);
-
-        log?.LogDebug("Use '{folder}' folder for mailbox '{mailbox}' local cache.", folder, Monitor.Mailbox.Name);
-
         return folder;
-    }
-
-    private async Task<CacheContext> OpenCacheDb(string folder, CancellationToken ct)
-    {
-        var csb = new SqliteConnectionStringBuilder();
-        csb.DataSource = Path.Combine(folder, "cache.db");
-        var ob = new DbContextOptionsBuilder<CacheContext>();
-        ob.UseLoggerFactory(lf);
-        ob.UseSqlite(csb.ConnectionString);
-        ob.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-        var cache = new CacheContext(ob.Options);
-        await cache.Database.EnsureCreatedAsync(ct).ConfigureAwait(false);
-        return cache;
     }
 
     [GeneratedRegex(@"([a-z][a-z][0-9a-z]{2,28}_[0-9a-z]{1,5})_(AT|DT|EC|MC|MT|NE|NR|NS|RC|SE)_[0-9a-z]{1,3}\.(xml|zip)", RegexOptions.IgnoreCase)]

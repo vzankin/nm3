@@ -35,6 +35,8 @@ builder.Services.AddTransient<MailKit.Net.Imap.ImapClient>();
 builder.Services.AddDbContext<MainContext>();
 // 9. Add Nm.Net.Settings from 'appsettings.js'
 builder.Services.Configure<Settings>(builder.Configuration.GetSection(Settings.Section));
+// 10. Add ContextFactory for contexts which have different connection string for different mailbox.
+builder.Services.AddScoped<ContextFactory>();
 
 
 var app = builder.Build();
