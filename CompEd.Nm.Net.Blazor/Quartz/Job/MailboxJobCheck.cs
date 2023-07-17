@@ -28,52 +28,63 @@ internal partial class MailboxJobCheck : MailboxJob
 
     protected override async Task ExecuteInternal(IJobExecutionContext ctx)
     {
-        // 0. ensure connected
-        await ReconnectAsync(imap, ctx.CancellationToken).ConfigureAwait(false);
-
-        // 1. get mailbox folder
+        // 0. get mailbox folder
         var folder = GetMailboxFolder();
+
+        // 1. ensure connected
+        await ReconnectAsync(imap, ctx.CancellationToken).ConfigureAwait(false);
 
         // 2. open database context
         using var cache = await cf.CreateCacheContext(Monitor.Mailbox, ctx.CancellationToken).ConfigureAwait(false);
 
-        // 3. delete outdated UIDs from local cache (with unactual UidValidity)
-        await cache.Mails
-            .Where(x => x.UidValidity != imap.Inbox.UidValidity)
-            .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.UidValidity, new uint?()).SetProperty(x => x.Uid, new uint?()), ctx.CancellationToken)
-            .ConfigureAwait(false);
+        // 3. invalidate UIDs
+        var cacheInfo = cache.Info.OrderBy(x => x.Id).FirstOrDefault();
+        if (cacheInfo?.Validity != imap.Inbox.UidValidity)
+        {
+            await cache.Mails
+                .Where(x => x.Uid.HasValue)
+                .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Uid, new uint?()), ctx.CancellationToken)
+                .ConfigureAwait(false);
+            await cache.SaveChangesAsync(ctx.CancellationToken).ConfigureAwait(false);
+        }
+
+        // 4. update cache info
+        cacheInfo ??= new();
+        cacheInfo.Validity = imap.Inbox.UidValidity;
+        cacheInfo.LastCheck = DateTime.UtcNow;
+        cache.Info.Update(cacheInfo);
         await cache.SaveChangesAsync(ctx.CancellationToken).ConfigureAwait(false);
 
-        // 4. get local UIDs
-        var uidsLocal = new UniqueIdSet(cache.Mails.Where(x => x.Uid.HasValue && x.UidValidity.HasValue).Select(x => x.UniqueId).AsEnumerable().OfType<UniqueId>());
+        // 5. get local UIDs
+        var uidsLocal = new UniqueIdSet(cache.Mails.Where(x => x.Uid.HasValue).Select(x => new UniqueId(cacheInfo.Validity, x.Uid!.Value)).AsEnumerable().OfType<UniqueId>());
 
-        // 5. get remote UIDs
+        // 6. get remote UIDs
         var uidsRemote = new UniqueIdSet(await imap.Inbox.SearchAsync(SearchQuery.All, ctx.CancellationToken).ConfigureAwait(false));
 
-        // 6. get UIDs to delete from local cache (ones that present in local cache but not on remote server)
+        // 7. get UIDs to delete from local cache (ones that present in local cache but not on remote server)
         var uidsToDel = uidsLocal.Except(uidsRemote);
 
-        // 7.1 notify about deleted mails
+        // 8.1 notify about deleted mails
         foreach (var mail in cache.Mails.Where(x => x.Uid.HasValue && uidsToDel.Select(x => x.Id).Contains(x.Uid.Value)))
             log?.LogInformation("{mailbox}: '{sbj}' marked as deleted", Monitor.Mailbox.Name, mail.Subject);
 
-        // 7.2 delete UIDs from local cache
+        // 8.2 delete UIDs from local cache
         await cache.Mails
             .Where(x => x.Uid.HasValue && uidsToDel.Select(x => x.Id).Contains(x.Uid.Value))
-            .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.UidValidity, new uint?()).SetProperty(x => x.Uid, new uint?()), ctx.CancellationToken)
+            .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Uid, new uint?()), ctx.CancellationToken)
             .ConfigureAwait(false);
         await cache.SaveChangesAsync(ctx.CancellationToken).ConfigureAwait(false);
 
-        // 8. get UIDs to add to local cache (ones that present on remote server but not in local cache)
+        // 9. get UIDs to add to local cache (ones that present on remote server but not in local cache)
         var uidsToAdd = uidsRemote.Except(uidsLocal);
 
-        // 9. check incoming emails (by 100 items):
+        // 10. check incoming emails (by 100 items):
         foreach (var uidsBatch in uidsToAdd.Chunk(100))
         {
-            // 9.1 fetch email headers
+            // 10.1 fetch email headers
             var summaries = await imap.Inbox.FetchAsync(uidsBatch, MessageSummaryItems.Envelope|MessageSummaryItems.Headers|MessageSummaryItems.InternalDate|MessageSummaryItems.BodyStructure, ctx.CancellationToken).ConfigureAwait(false);
 
-            // 9.2 prepare Mail records to insert
+            // 10.2 prepare Mail records to insert
             var toInsert = new List<Mail>();
             foreach (var summary in summaries)
             {
@@ -81,7 +92,7 @@ internal partial class MailboxJobCheck : MailboxJob
                 if (mail != null)
                 {
                     // if there is message with such MessageId, just update UID
-                    mail.UniqueId = summary.UniqueId;
+                    mail.Uid = summary.UniqueId.Id;
                     cache.Mails.Update(mail);
                 }
                 else
@@ -89,21 +100,21 @@ internal partial class MailboxJobCheck : MailboxJob
                 log?.LogInformation("{mailbox}: '{sbj}' checked", Monitor.Mailbox.Name, summary.NormalizedSubject);
             }
 
-            // 9.3 Download all SdI notifications
+            // 10.3 Download all SdI notifications
             foreach (var mail in toInsert.Where(x => x.SdiType != null))
             {
                 await DownloadSdi(folder, mail, ctx.CancellationToken).ConfigureAwait(false);
                 log?.LogInformation("{mailbox}: '{sbj}' downloaded. [{sdiId}:{sdiType}]", Monitor.Mailbox.Name, mail.Subject, mail.SdiId, mail.SdiType);
             }
 
-            // 9.4 Download PEC notifications only for outgoing mails that presents in cache (i.e. for sent EC mail)
+            // 10.4 Download PEC notifications only for outgoing mails that presents in cache (i.e. for sent EC mail)
             foreach (var mail in toInsert.Where(x => cache.Mails.Any(m => m.MessageId == x.PecId)))
             {
                 await DownloadPec(folder, mail, ctx.CancellationToken).ConfigureAwait(false);
                 log?.LogInformation("{mailbox}: '{sbj}' downloaded. [{pecId}:{pecType}]", Monitor.Mailbox.Name, mail.Subject, mail.PecId, mail.PecType);
             }
 
-            // 9.5 insert Mail records batch
+            // 10.5 insert Mail records batch
             await cache.Mails.AddRangeAsync(toInsert, ctx.CancellationToken).ConfigureAwait(false);
             await cache.SaveChangesAsync(ctx.CancellationToken).ConfigureAwait(false);
         }
@@ -123,7 +134,7 @@ internal partial class MailboxJobCheck : MailboxJob
     private static Mail FromSummary(IMessageSummary summary)
     {
         var mail = new Mail();
-        mail.UniqueId = summary.UniqueId;
+        mail.Uid = summary.UniqueId.Id;
         mail.MessageId = summary.Envelope.MessageId;
         mail.Subject = summary.NormalizedSubject;
         mail.From = summary.Envelope.From.ToString();
@@ -167,7 +178,7 @@ internal partial class MailboxJobCheck : MailboxJob
         if (!Directory.Exists(path))
             Directory.CreateDirectory(path);
         path = Path.Combine(path, $"{mail.MessageId}.eml");
-        using var stream = await imap.Inbox.GetStreamAsync(mail.UniqueId!.Value, "", ct).ConfigureAwait(false);
+        using var stream = await imap.Inbox.GetStreamAsync(new UniqueId(mail.Uid!.Value), "", ct).ConfigureAwait(false);
         using var fs = File.Create(path);
         await stream.CopyToAsync(fs, ct).ConfigureAwait(false);
         return path;
