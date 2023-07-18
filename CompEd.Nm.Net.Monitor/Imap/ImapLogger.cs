@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CompEd.Nm.Net.Imap;
 
-public sealed class ImapLogger : IProtocolLogger
+internal sealed class ImapLogger : IProtocolLogger
 {
     private readonly ILogger log;
     private IAuthenticationSecretDetector secret = default!;
