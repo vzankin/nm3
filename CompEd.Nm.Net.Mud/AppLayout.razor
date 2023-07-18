@@ -40,6 +40,6 @@
     void SetCulture(CultureInfo culture)
     {
         var uri = new Uri(Navigation.Uri).GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
-        Navigation.NavigateTo($"culture?culture={Uri.EscapeDataString(culture.Name)}&redirectUri={Uri.EscapeDataString(uri)}", forceLoad: true, replace: true);
+        Navigation.NavigateTo($"culture?culture={Uri.EscapeDataString(culture.Name)}&redirect={Uri.EscapeDataString(uri)}", forceLoad: true, replace: true);
     }
 }
