@@ -1,0 +1,11 @@
+﻿@page "/"
+
+@inject IStringLocalizer<App> Localizer
+
+<PageTitle>@Localizer["Title"]</PageTitle>
+
+<MudPaper Class="pa-8">
+    <MudText Typo="Typo.h3" GutterBottom="true">@Localizer["Hello World!"]</MudText>
+    <MudText Class="mb-8">@Localizer["First page"]</MudText>
+    <MudNavLink Href="/second" Icon="@Icons.Material.Filled.Link" IconColor="Color.Primary">@Localizer["Second page"]</MudNavLink>
+</MudPaper>

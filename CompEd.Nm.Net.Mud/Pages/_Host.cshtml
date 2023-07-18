@@ -1,0 +1,17 @@
+﻿@page "/"
+@namespace CompEd.Nm.Net.Mud.Pages
+@using Microsoft.AspNetCore.Localization;
+@using System.Globalization;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "_Layout";
+}
+
+<component type="typeof(App)" render-mode="ServerPrerendered" />
+
+@{
+    this.HttpContext.Response.Cookies.Append(
+        CookieRequestCultureProvider.DefaultCookieName,
+        CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(CultureInfo.CurrentCulture, CultureInfo.CurrentUICulture))
+    );
+}

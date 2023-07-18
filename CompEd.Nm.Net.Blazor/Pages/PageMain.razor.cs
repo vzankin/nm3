@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
 namespace CompEd.Nm.Net.Pages;
@@ -10,4 +11,10 @@ public partial class PageMain
 
     [Inject]
     public Db.MainContext Db { get; set; } = default!;
+
+    [Inject]
+    public required IStringLocalizer<PageMain> PageMainResources { get; set; }
+
+    [Inject]
+    public required IStringLocalizer<SharedResources> SharedResources {  get; set; }
 }

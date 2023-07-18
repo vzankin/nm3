@@ -1,0 +1,45 @@
+﻿@using System.Globalization;
+@using Microsoft.Extensions.Options;
+
+@inherits LayoutComponentBase
+
+@inject IOptions<RequestLocalizationOptions> LocalizationOptions
+@inject IStringLocalizer<App> Localizer
+@inject NavigationManager Navigation
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIcon Icon="@Icons.Material.Filled.MarkEmailRead" Color="Color.Inherit" Size="Size.Large" Class="mr-4"/>
+        <MudText Typo="Typo.h5">@Localizer["Notification Monitor 2.0"]</MudText>
+        <MudSpacer/>
+        <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Dense="true">
+            <ActivatorContent>
+                <MudButton Color="Color.Inherit" EndIcon="@Icons.Material.Filled.KeyboardArrowDown"><img src="/flags/@(CultureInfo.CurrentUICulture.Name).svg" height="14" width="21" class="mr-1" />&nbsp;@CultureInfo.CurrentUICulture.DisplayName</MudButton>
+            </ActivatorContent>
+            <ChildContent>
+                @foreach (var culture in LocalizationOptions.Value!.SupportedUICultures!.Where(x => x.Name != "ru-RU"))
+                {
+                    <MudMenuItem OnClick=@(() => SetCulture(culture))><img src="/flags/@(culture.Name.ToLower()).svg" height="14" width="21" class="mr-1" />&nbsp;@(culture.DisplayName.ToUpper())</MudMenuItem>
+                }
+            </ChildContent>
+        </MudMenu>
+    </MudAppBar>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Large" Class="my-16 pt-16">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code
+{
+    void SetCulture(CultureInfo culture)
+    {
+        var uri = new Uri(Navigation.Uri).GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+        Navigation.NavigateTo($"culture?culture={Uri.EscapeDataString(culture.Name)}&redirectUri={Uri.EscapeDataString(uri)}", forceLoad: true, replace: true);
+    }
+}

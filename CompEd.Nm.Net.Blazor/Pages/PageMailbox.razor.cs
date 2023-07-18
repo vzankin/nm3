@@ -2,7 +2,7 @@
 using CompEd.Nm.Net.Db.Model;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Localization;
 
 namespace CompEd.Nm.Net.Pages;
 
@@ -17,7 +17,13 @@ public partial class PageMailbox : IDisposable
     [Inject]
     public required ContextFactory CacheFactory { get; set; }
 
-    public required Db.Model.Mailbox Mailbox { get; set; }
+    [Inject]
+    public required IStringLocalizer<PageMailbox> PageMailboxResources { get; set; }
+
+    [Inject]
+    public required IStringLocalizer<SharedResources> SharedResources { get; set; }
+
+    public required Mailbox Mailbox { get; set; }
     public required CacheContext Cache { get; set; }
     public CacheInfo? Info { get; set; }
 

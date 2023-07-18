@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Localization;
-using System.Resources;
 using System.Runtime.Versioning;
 
 [assembly: SupportedOSPlatform("windows")]

@@ -37,10 +37,20 @@ builder.Services.AddDbContext<MainContext>();
 builder.Services.Configure<Settings>(builder.Configuration.GetSection(Settings.Section));
 // 10. Add ContextFactory for contexts which have different connection string for different mailbox.
 builder.Services.AddScoped<ContextFactory>();
+// 11. Add IStringLocalizer<> services
+builder.Services.AddLocalization(opt => opt.ResourcesPath = "Resources");
+// 12. Configure supported cultures
+//builder.Services.Configure<RequestLocalizationOptions>();
 
 
 var app = builder.Build();
 
+app.UseRequestLocalization(opt =>
+{
+    //opt.SetDefaultCulture("en");
+    opt.AddSupportedCultures("en", "it", "ru");
+    opt.AddSupportedUICultures("en", "it", "ru");
+});
 app.UseStaticFiles();
 app.UseRouting();
 
