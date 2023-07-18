@@ -1,0 +1,34 @@
+﻿@page "/mailbox/{id:int}"
+
+@inject IStringLocalizer<App> Localizer
+@inject Db.MainContext Db
+@inject Db.CacheContextFactory CacheFactory
+
+<PageTitle>@Mailbox.Name</PageTitle>
+
+<MudPaper Class="pa-8" Width="100%" Height="100%">
+    <MudText Typo="Typo.h5" GutterBottom="true">@Mailbox.Name</MudText>
+</MudPaper>
+
+@code
+{
+    [Parameter]
+    public int Id { get; set; }
+
+    public required Db.Model.Mailbox Mailbox { get; set; }
+    public required Db.CacheContext Cache { get; set; }
+    public Db.Model.Cache? Info { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Mailbox = Db.Mailboxes.Single(x => x.Id == Id);
+        Cache = await CacheFactory.CreateCacheContext(Mailbox, default).ConfigureAwait(false);
+        Info = await Cache.Cache.OrderBy(x => x.Id).FirstOrDefaultAsync().ConfigureAwait(false);
+    }
+
+    public void Dispose()
+    {
+        Cache.Dispose();
+        GC.SuppressFinalize(this);
+    }
+}
