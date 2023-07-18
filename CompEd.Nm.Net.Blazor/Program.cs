@@ -1,8 +1,4 @@
-using CompEd.Nm.Net;
-using CompEd.Nm.Net.Db;
-using CompEd.Nm.Net.Imap;
 using Microsoft.Extensions.Logging.EventLog;
-using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
@@ -18,10 +14,8 @@ builder.Services.AddLogging(log =>
 builder.Services.Configure<EventLogSettings>(opt => { opt.LogName = "CompEd"; opt.SourceName = "CompEd.Nm.Net"; });
 // 3. Add CompEd.Nm.Net services
 builder.Services.AddNmServices(builder.Configuration);
-// 11. Add IStringLocalizer<> services
+// 4. Add IStringLocalizer<> services
 builder.Services.AddLocalization(opt => opt.ResourcesPath = "Resources");
-// 12. Configure supported cultures
-//builder.Services.Configure<RequestLocalizationOptions>();
 
 
 var app = builder.Build();
