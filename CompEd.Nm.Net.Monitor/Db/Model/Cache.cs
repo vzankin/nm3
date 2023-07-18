@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CompEd.Nm.Net.Db.Model;
 
 [Table("info")]
-public class CacheInfo
+public class Cache
 {
     [Column("id"), Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }

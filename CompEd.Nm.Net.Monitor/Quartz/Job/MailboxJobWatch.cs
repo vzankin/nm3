@@ -1,4 +1,5 @@
 ﻿using MailKit.Net.Imap;
+using Microsoft.Extensions.Logging;
 using Quartz;
 
 namespace CompEd.Nm.Net.Job;

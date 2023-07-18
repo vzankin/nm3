@@ -1,8 +1,7 @@
 ﻿using MailKit.Net.Imap;
 using MailKit;
 using Quartz;
-using CompEd.Nm.Net.Db.Model;
-using System.Xml.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace CompEd.Nm.Net.Job;
 

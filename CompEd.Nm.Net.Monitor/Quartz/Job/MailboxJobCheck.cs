@@ -11,6 +11,7 @@ using Quartz;
 using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 using System.Xml.XPath;
+using Microsoft.Extensions.Logging;
 
 namespace CompEd.Nm.Net.Job;
 
@@ -18,9 +19,9 @@ namespace CompEd.Nm.Net.Job;
 internal partial class MailboxJobCheck : MailboxJob
 {
     private readonly Settings settings;
-    private readonly ContextFactory cf;
+    private readonly CacheContextFactory cf;
 
-    public MailboxJobCheck(IOptions<Settings> settings, ContextFactory cf, ImapClient imap, ILogger<MailboxJobCheck> log) : base(imap, log)
+    public MailboxJobCheck(IOptions<Settings> settings, CacheContextFactory cf, ImapClient imap, ILogger<MailboxJobCheck> log) : base(imap, log)
     {
         this.settings = settings.Value;
         this.cf = cf;
@@ -38,7 +39,7 @@ internal partial class MailboxJobCheck : MailboxJob
         using var cache = await cf.CreateCacheContext(Monitor.Mailbox, ctx.CancellationToken).ConfigureAwait(false);
 
         // 3. invalidate UIDs
-        var cacheInfo = cache.Info.OrderBy(x => x.Id).FirstOrDefault();
+        var cacheInfo = cache.Cache.OrderBy(x => x.Id).FirstOrDefault();
         if (cacheInfo?.Validity != imap.Inbox.UidValidity)
         {
             await cache.Mails
@@ -52,7 +53,7 @@ internal partial class MailboxJobCheck : MailboxJob
         cacheInfo ??= new();
         cacheInfo.Validity = imap.Inbox.UidValidity;
         cacheInfo.LastCheck = DateTime.UtcNow;
-        cache.Info.Update(cacheInfo);
+        cache.Cache.Update(cacheInfo);
         await cache.SaveChangesAsync(ctx.CancellationToken).ConfigureAwait(false);
 
         // 5. get local UIDs

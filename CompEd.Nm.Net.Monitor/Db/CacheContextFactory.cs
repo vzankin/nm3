@@ -1,15 +1,16 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace CompEd.Nm.Net.Db;
 
-public class ContextFactory
+public class CacheContextFactory
 {
     private readonly Settings settings;
     private readonly ILoggerFactory lf;
 
-    public ContextFactory(IOptions<Settings> options, ILoggerFactory lf)
+    public CacheContextFactory(IOptions<Settings> options, ILoggerFactory lf)
     {
         this.settings = options.Value;
         this.lf = lf;

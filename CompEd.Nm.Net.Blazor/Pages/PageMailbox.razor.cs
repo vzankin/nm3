@@ -15,7 +15,7 @@ public partial class PageMailbox : IDisposable
     public required MainContext Db { get; set; }
 
     [Inject]
-    public required ContextFactory CacheFactory { get; set; }
+    public required CacheContextFactory CacheFactory { get; set; }
 
     [Inject]
     public required IStringLocalizer<PageMailbox> PageMailboxResources { get; set; }
@@ -25,13 +25,13 @@ public partial class PageMailbox : IDisposable
 
     public required Mailbox Mailbox { get; set; }
     public required CacheContext Cache { get; set; }
-    public CacheInfo? Info { get; set; }
+    public Cache? Info { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         Mailbox = Db.Mailboxes.Single(x => x.Id == Id);
         Cache = await CacheFactory.CreateCacheContext(Mailbox, default).ConfigureAwait(false);
-        Info = await Cache.Info.OrderBy(x => x.Id).FirstOrDefaultAsync().ConfigureAwait(false);
+        Info = await Cache.Cache.OrderBy(x => x.Id).FirstOrDefaultAsync().ConfigureAwait(false);
     }
 
     public void Dispose()

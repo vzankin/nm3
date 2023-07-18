@@ -1,4 +1,5 @@
 ﻿using MailKit;
+using Microsoft.Extensions.Logging;
 using System.Text;
 
 namespace CompEd.Nm.Net.Imap;
