@@ -1,0 +1,49 @@
+﻿@using System.Globalization
+
+@inject IStringLocalizer<App> Localization
+@inject IOptions<RequestLocalizationOptions> LocalizationOptions
+@inject ITextLocalizerService LocalizationService
+@inject NavigationManager Navigation
+
+<Bar Breakpoint="Breakpoint.Desktop" Background="Background.Dark" ThemeContrast="ThemeContrast.Dark">
+    <BarBrand>
+        <BarItem>
+            <BarLink To="">
+                <BarIcon Margin="Margin.Is2.FromEnd" IconName="IconName.Mail" />
+                @Localization["Notification Monitor 2.0"]
+            </BarLink>
+        </BarItem>
+    </BarBrand>
+    <BarEnd>
+        <BarItem>
+            <BarDropdown RightAligned>
+                <BarDropdownToggle>
+                    <img src=@FlagPath(CultureInfo.CurrentUICulture) height="14" width="21" />&nbsp;@CultureInfo.CurrentUICulture.DisplayName.ToUpper()
+                </BarDropdownToggle>
+                <BarDropdownMenu>
+                    @foreach (var culture in LocalizationOptions.Value!.SupportedUICultures!)
+                    {
+                        <BarDropdownItem @key="@culture.Name" Clicked="@(() => SelectCulture(culture.Name))">
+                            <img src=@FlagPath(culture) height="14" width="21" />
+                            <Text>@culture.DisplayName.ToUpper()</Text>
+                        </BarDropdownItem>
+                    }
+                </BarDropdownMenu>
+            </BarDropdown>
+        </BarItem>
+    </BarEnd>
+</Bar>
+
+@code
+{
+    Task SelectCulture(string name)
+    {
+        LocalizationService!.ChangeLanguage(name);
+        var uri = new Uri(Navigation.Uri).GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+        Navigation.NavigateTo($"culture?culture={Uri.EscapeDataString(name)}&redirect={Uri.EscapeDataString(uri)}", forceLoad: true, replace: true);
+        return Task.CompletedTask;
+    }
+
+    static string FlagPath(CultureInfo culture) =>
+        $"css/flags/{culture.Name.ToLower()}.svg";
+}

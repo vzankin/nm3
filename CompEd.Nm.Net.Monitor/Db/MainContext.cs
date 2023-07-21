@@ -1,6 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace CompEd.Nm.Net.Db;
 
@@ -10,8 +9,8 @@ public class MainContext : DbContext
 
     public DbSet<Model.Mailbox> Mailboxes { get; set; }
 
-    public MainContext(IOptions<Settings> settings, DbContextOptions<MainContext> opt) : base(opt) =>
-        this.settings = settings.Value;
+    public MainContext(Settings settings, DbContextOptions<MainContext> opt) : base(opt) =>
+        this.settings = settings;
 
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
     {

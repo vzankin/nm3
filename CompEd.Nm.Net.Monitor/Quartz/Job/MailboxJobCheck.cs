@@ -1,9 +1,7 @@
 ﻿using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Search;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using MimeKit;
 using CompEd.Nm.Net.Db;
 using CompEd.Nm.Net.Db.Model;
@@ -21,9 +19,9 @@ internal partial class MailboxJobCheck : MailboxJob
     private readonly Settings settings;
     private readonly CacheContextFactory cf;
 
-    public MailboxJobCheck(IOptions<Settings> settings, CacheContextFactory cf, ImapClient imap, ILogger<MailboxJobCheck> log) : base(imap, log)
+    public MailboxJobCheck(Settings settings, CacheContextFactory cf, ImapClient imap, ILogger<MailboxJobCheck> log) : base(imap, log)
     {
-        this.settings = settings.Value;
+        this.settings = settings;
         this.cf = cf;
     }
 

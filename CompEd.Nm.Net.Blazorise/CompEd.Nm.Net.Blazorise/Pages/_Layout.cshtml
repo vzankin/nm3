@@ -1,0 +1,46 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@namespace CompEd.Nm.Net.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CompEd.Nm.Net.Blazorise</title>
+
+    <base href="~/" />
+
+    <component type="typeof(HeadOutlet)" render-mode="Server" />
+    <!-- Material CSS -->
+    <link href="css/material/material.min.css" rel="stylesheet">
+
+    <!-- Add Material font (Roboto) and Material icon as needed -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i|Roboto+Mono:300,400,700|Roboto+Slab:300,400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link href="_content/Blazorise/blazorise.min.css?v=1.2.0.0" rel="stylesheet" />
+    <link href="_content/Blazorise.Material/blazorise.material.css" rel="stylesheet" />
+    <link href="_content/Blazorise.Icons.Material/blazorise.icons.material.css" rel="stylesheet" />
+
+    <link href="CompEd.Nm.Net.Blazorise.Styles.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/blazor-ui.css" />
+</head>
+<body>
+    @RenderBody()
+
+    <div id="blazor-error-ui">
+        <environment include="Staging,Production">
+            An error has occurred. This application may no longer respond until reloaded.
+        </environment>
+        <environment include="Development">
+            An unhandled exception has occurred. See browser dev tools for details.
+        </environment>
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <script src="js/material/material.min.js"></script>
+    <script src="_framework/blazor.server.js"></script>
+</body>
+</html>

@@ -1,19 +1,18 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Quartz;
 
 namespace CompEd.Nm.Net;
 
-internal class MailboxMonitorManager : BackgroundService
+public class MailboxMonitorManager : BackgroundService
 {
     private readonly IServiceProvider sp;
     private readonly ISchedulerFactory sf;
     private readonly ILogger? log;
     private readonly Dictionary<string, MailboxMonitor> monitors = new();
 
-    public MailboxMonitorManager(IServiceProvider sp, ISchedulerFactory sf, IOptions<Settings> settings, ILogger<MailboxMonitorManager>? log)
+    public MailboxMonitorManager(IServiceProvider sp, ISchedulerFactory sf, ILogger<MailboxMonitorManager>? log)
     {
         this.sp = sp;
         this.sf = sf;

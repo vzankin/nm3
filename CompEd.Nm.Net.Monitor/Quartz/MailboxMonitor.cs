@@ -3,7 +3,7 @@ using Quartz;
 
 namespace CompEd.Nm.Net;
 
-internal class MailboxMonitor : IAsyncDisposable
+public class MailboxMonitor : IAsyncDisposable
 {
     private readonly IScheduler scheduler;
 
