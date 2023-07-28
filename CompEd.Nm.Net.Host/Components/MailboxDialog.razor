@@ -7,7 +7,7 @@
                     <RadzenTextBox Name="Name" @bind-Value=@Mailbox.Name class="w-100" Change=@OnNameChange />
                 </ChildContent>
                 <Validator>
-                    <RadzenRequiredValidator Component="Name" Popup Style="z-index: 1080;" />
+                    <RadzenRequiredValidator Component="Name" Text=@L["Required"] Popup Style="z-index: 1080;" />
                 </Validator>
             </FormField>
             <!-- Host -->
@@ -16,7 +16,7 @@
                     <RadzenTextBox Name="Host" @bind-Value=@Mailbox.ImapHost class="w-100" />
                 </ChildContent>
                 <Validator>
-                    <RadzenRequiredValidator Component="Host" Popup Style="z-index: 1080;" />
+                    <RadzenRequiredValidator Component="Host" Text=@L["Required"] Popup Style="z-index: 1080;" />
                 </Validator>
             </FormField>
             <!-- Port -->
@@ -25,7 +25,7 @@
                     <RadzenNumeric Name="Port" ShowUpDown=false @bind-Value=@Mailbox.ImapPort class="w-100"/>
                 </ChildContent>
                 <Validator>
-                    <RadzenNumericRangeValidator Component="Port" Min="1" Max="65535" Popup Style="z-index: 1080;" />
+                    <RadzenNumericRangeValidator Component="Port" Min="1" Max="65535" Text=@L["1..65535"] Popup Style="z-index: 1080;" />
                 </Validator>
             </FormField>
             <!-- Username -->

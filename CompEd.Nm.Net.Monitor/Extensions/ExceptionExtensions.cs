@@ -1,7 +1,7 @@
 ﻿namespace CompEd.Nm.Net;
 
-internal static class ExceptionExtensions
+public static class ExceptionExtensions
 {
-    internal static string InnerMessage(this Exception e) =>
+    public static string InnerMessage(this Exception e) =>
         e.InnerException?.InnerMessage() ?? e.Message;
 }

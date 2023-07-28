@@ -84,3 +84,14 @@ a {
     .loading-progress-text:after {
         content: var(--blazor-load-percentage-text, "Loading");
     }
+
+.rz-notification {
+    right: auto !important;
+    top: auto !important;
+    bottom: 12px !important;
+    width: 100% !important;
+}
+
+.rz-notification-message.rz-growl {
+    width: 480px !important;
+}

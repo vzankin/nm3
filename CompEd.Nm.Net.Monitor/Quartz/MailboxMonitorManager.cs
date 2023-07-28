@@ -26,9 +26,27 @@ public class MailboxMonitorManager : BackgroundService
         await db.Database.EnsureCreatedAsync(ct).ConfigureAwait(false);
 
         foreach (var mailbox in db.Mailboxes)
+            await CreateMonitor(mailbox, ct);
+    }
+
+    public async Task CreateMonitor(Db.Model.Mailbox mailbox, CancellationToken ct = default)
+    {
+        log?.LogInformation("create scheduler jobs for '{mailbox}'", mailbox.Name);
+        monitors[mailbox.Name] = await MailboxMonitor.Create(sf, mailbox, ct);
+    }
+
+    public async Task DeleteMonitor(Db.Model.Mailbox mailbox, CancellationToken ct = default)
+    {
+        if (monitors.Remove(mailbox.Name, out var monitor))
         {
-            log?.LogInformation("create scheduler jobs for '{mailbox}'", mailbox.Name);
-            monitors[mailbox.Name] = await MailboxMonitor.Create(sf, mailbox, ct);
+            log?.LogInformation("delete scheduler jobs for '{mailbox}'", mailbox.Name);
+            await monitor.DisposeAsync();
         }
+    }
+
+    public async Task RestartMonitor(Db.Model.Mailbox mailbox, CancellationToken ct = default)
+    {
+        await DeleteMonitor(mailbox, ct);
+        await CreateMonitor(mailbox, ct);
     }
 }
