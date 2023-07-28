@@ -6,7 +6,7 @@
 <!-- JustifyContent for row is horizontal alignment -->
 <!-- There is 12 step grid, so two columns with Size="6" takes 50%/50% of the row -->
 <RadzenRow AlignItems=AlignItems.Center>
-<RadzenColumn Size="6">
+    <RadzenColumn Size="6">
         <RadzenStack Orientation=Orientation.Horizontal JustifyContent=JustifyContent.Start Gap="4">
             <RadzenIcon Icon="inbox" />
             <RadzenLink Href=@($"mailbox/{Mailbox.Id}") Text=@Mailbox.Name />
