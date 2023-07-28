@@ -1,0 +1,32 @@
+﻿@inject TooltipService Tooltip
+
+<!-- Component layout:  [ <<inbox-icon, Mailbox.Name | >>edit-button, delete-button ] -->
+<!-- Row takes 100% of parent's width' -->
+<!-- AlignItems for row is vertical alignment -->
+<!-- JustifyContent for row is horizontal alignment -->
+<!-- There is 12 step grid, so two columns with Size="6" takes 50%/50% of the row -->
+<RadzenRow AlignItems=AlignItems.Center>
+<RadzenColumn Size="6">
+        <RadzenStack Orientation=Orientation.Horizontal JustifyContent=JustifyContent.Start Gap="4">
+            <RadzenIcon Icon="inbox" />
+            <RadzenLink Href=@($"mailbox/{Mailbox.Id}") Text=@Mailbox.Name />
+        </RadzenStack>
+    </RadzenColumn>
+    <RadzenColumn Size="6">
+        <RadzenStack Orientation=Orientation.Horizontal JustifyContent=JustifyContent.End Gap="4">
+            <RadzenButton Click=@(async () => await OnModify.InvokeAsync(Mailbox)) Size="ButtonSize.Small" ButtonStyle=ButtonStyle.Light Icon="edit" MouseEnter=@(element => Tooltip.Open(element, L["Edit"])) />
+            <RadzenButton Click=@(async () => await OnDelete.InvokeAsync(Mailbox)) Size="ButtonSize.Small" ButtonStyle=ButtonStyle.Light Icon="delete" MouseEnter=@(element => Tooltip.Open(element, L["Delete"])) />
+        </RadzenStack>
+    </RadzenColumn>
+</RadzenRow>
+
+@code {
+    [Parameter, EditorRequired]
+    public required Db.Model.Mailbox Mailbox { get; set; }
+
+    [Parameter]
+    public EventCallback<Db.Model.Mailbox> OnModify { get; set; }
+
+    [Parameter]
+    public EventCallback<Db.Model.Mailbox> OnDelete { get; set; }
+}

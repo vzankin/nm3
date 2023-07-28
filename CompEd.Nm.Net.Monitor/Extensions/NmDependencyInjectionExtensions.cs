@@ -6,7 +6,7 @@ using Quartz;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
-public static class ServiceExtensions
+public static class NmDependencyInjectionExtensions
 {
     public static IServiceCollection AddNmServices(this IServiceCollection svc, ConfigurationManager cfg)
     {
@@ -18,10 +18,10 @@ public static class ServiceExtensions
         svc
         // Add Nm.Net.Settings from 'settings.js'
         .Configure<Settings>(cfg.GetSection(Settings.Section))
-        // Add SettingsProvider
+        // Add singletone SettingsProvider
         .AddSingleton<SettingsProvider>()
-        // Add Settings provided by SettingsProvider
-        .AddTransient<Settings>(sp => sp.GetRequiredService<SettingsProvider>().Settings)
+        // Add singletone Settings provided by SettingsProvider
+        .AddTransient(sp => sp.GetRequiredService<SettingsProvider>().Settings)
         // Add Quartz services
         .AddQuartz(opt =>
         {
@@ -37,10 +37,12 @@ public static class ServiceExtensions
         .AddDbContext<MainContext>()
         // Add ContextFactory for contexts which have different connection string for different mailbox.
         .AddScoped<CacheContextFactory>()
+        // Add MailboxMonitorManager singletone so it can be accessed through DI
+        .AddSingleton<MailboxMonitorManager>()
         // Add QuartzHostedService (IHostedService implementation)
         .AddQuartzHostedService(q => q.WaitForJobsToComplete = true)
-        // Add MailboxMonitorManager AFTER Quartz hosted service.
-        .AddHostedService<MailboxMonitorManager>()
+        // Add MailboxMonitorManager AFTER Quartz hosted service, so it's ExecuteAsync() method will be called after QuartzHostedService's one.
+        .AddHostedService(sp => sp.GetRequiredService<MailboxMonitorManager>())
         ;
 
         return svc;

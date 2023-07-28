@@ -1,0 +1,21 @@
+﻿@using System.Globalization;
+
+<RadzenMenuItem Click=@(async () => await Selected.InvokeAsync(Culture)) Value=Culture ChildContent=@ChildContent>
+    <Template>
+        <RadzenStack Orientation=Orientation.Horizontal AlignItems=AlignItems.Center Gap="4">
+            <RadzenImage Path=@($"flags/{Culture.Name}.svg") Style="width: 21px; height: 14px" />
+            <RadzenLabel Text=@Culture.DisplayName.ToUpper() />
+        </RadzenStack>
+    </Template>
+</RadzenMenuItem>
+
+@code {
+    [Parameter, EditorRequired]
+    public required CultureInfo Culture { get; set; }
+
+    [Parameter]
+    public EventCallback<CultureInfo> Selected { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

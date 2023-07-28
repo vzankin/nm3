@@ -1,0 +1,16 @@
+﻿<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context=routeData>
+        <RouteView RouteData=@routeData DefaultLayout=@typeof(MainLayout) />
+    </Found>
+    <NotFound>
+        <PageTitle>@L["Not Found"]</PageTitle>
+        <LayoutView Layout=@typeof(MainLayout)>
+            <RadzenRow>
+                <RadzenColumn Size="12" class="rz-my-5">
+                    <RadzenText Text=@L["Page not found"] TextStyle=TextStyle.DisplayH1 class="rz-m-0 rz-mb-2" TextAlign=TextAlign.Center />
+                    <RadzenText Text=@L["Sorry, there's nothing at this address."] TextStyle=TextStyle.H6 class="rz-m-0" TextAlign=TextAlign.Center TagName=TagName.P />
+                </RadzenColumn>
+            </RadzenRow>
+        </LayoutView>
+    </NotFound>
+</Router>

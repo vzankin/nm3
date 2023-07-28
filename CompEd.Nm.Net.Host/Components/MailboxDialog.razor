@@ -1,0 +1,83 @@
+﻿<RadzenTemplateForm TItem=Db.Model.Mailbox Data=@Mailbox Submit=@(() => DialogService.Close(true))>
+    <RadzenFieldset class="rz-mb-4">
+        <RadzenStack Gap="1rem">
+            <!-- Name -->
+            <FormField Component="Name" Label=@L["Name"]>
+                <ChildContent>
+                    <RadzenTextBox Name="Name" @bind-Value=@Mailbox.Name class="w-100" Change=@OnNameChange />
+                </ChildContent>
+                <Validator>
+                    <RadzenRequiredValidator Component="Name" Popup Style="z-index: 1080;" />
+                </Validator>
+            </FormField>
+            <!-- Host -->
+            <FormField Component="Host" Label=@L["Host"]>
+                <ChildContent>
+                    <RadzenTextBox Name="Host" @bind-Value=@Mailbox.ImapHost class="w-100" />
+                </ChildContent>
+                <Validator>
+                    <RadzenRequiredValidator Component="Host" Popup Style="z-index: 1080;" />
+                </Validator>
+            </FormField>
+            <!-- Port -->
+            <FormField Component="Port" Label=@L["Port"]>
+                <ChildContent>
+                    <RadzenNumeric Name="Port" ShowUpDown=false @bind-Value=@Mailbox.ImapPort class="w-100"/>
+                </ChildContent>
+                <Validator>
+                    <RadzenNumericRangeValidator Component="Port" Min="1" Max="65535" Popup Style="z-index: 1080;" />
+                </Validator>
+            </FormField>
+            <!-- Username -->
+            <FormField Component="User" Label=@L["Username"]>
+                <RadzenTextBox Name="User" @bind-Value=@Mailbox.ImapUsername class="w-100" />
+            </FormField>
+            <!-- Password -->
+            <FormField Component="Pass" Label=@L["Password"]>
+                <RadzenPassword Name="Pass" @bind-Value=@Mailbox.ImapPassword class="w-100" />
+            </FormField>
+            <!-- Cache Folder -->
+            <FormField Component="Path" Label=@L["Cache Folder"]>
+                <RadzenTextBox Name="Path" @bind-Value=@Mailbox.Folder class="w-100" />
+            </FormField>
+            <!-- Watching Enabled -->
+            <RadzenRow AlignItems=AlignItems.Center>
+                <RadzenCheckBox @bind-Value=@Mailbox.IsWatchEnabled Name="IsWatchEnabled" />
+                <RadzenLabel Text=@L["Monitoring enabled"] Component="IsWatchEnabled" />
+            </RadzenRow>
+            <!-- Cleaning Enabled -->
+            <RadzenRow AlignItems=AlignItems.Center>
+                <RadzenCheckBox @bind-Value=@Mailbox.IsCleanEnabled Name="IsCleanEnabled" />
+                <RadzenLabel Text=@L["Cleaning enabled"] Component="IsCleanEnabled" />
+            </RadzenRow>
+            <!-- Clean Age -->
+            <FormField Component="CleanAge" Label=@L["Clean Older Than (days)"]>
+                <ChildContent>
+                    <RadzenNumeric Name="CleanAge" ShowUpDown=false @bind-Value=@Mailbox.CleanOlderThan class="w-100" Disabled=@(!Mailbox.IsCleanEnabled) />
+                </ChildContent>
+            </FormField>
+        </RadzenStack>
+    </RadzenFieldset>
+    <RadzenStack Orientation=Orientation.Horizontal JustifyContent=JustifyContent.End Gap="0">
+        <RadzenButton Variant=Variant.Text ButtonType="ButtonType.Submit" Text=@L["OK"] class="rz-ripple" />
+        <RadzenButton Variant=Variant.Text ButtonType ="ButtonType.Button" Text=@L["Cancel"] class="rz-text-secondary-color" Click=@(() => DialogService.Close(false)) />
+    </RadzenStack>
+</RadzenTemplateForm>
+
+@code
+{
+    [Parameter, EditorRequired]
+    public required DialogService DialogService { get; set; }
+
+    [Parameter, EditorRequired]
+    public required Db.Model.Mailbox Mailbox { get; set; }
+
+    [Inject]
+    public required Settings Settings { get; set; }
+
+    void OnNameChange(string value)
+    {
+        var root = Path.GetDirectoryName(Mailbox.Folder) ?? Settings.RootFolder;
+        Mailbox.Folder = Path.Combine(root, value);
+    }
+}

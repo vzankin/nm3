@@ -21,7 +21,7 @@ public class CacheContextFactory
         var folder = mailbox.Folder ?? Path.Combine(settings.RootFolder, mailbox.Name);
         if (!Directory.Exists(folder))
             Directory.CreateDirectory(folder);
-        csb.DataSource = Path.Combine(folder, "cache.db");
+        csb.DataSource = Path.Combine(folder, $"{DateTime.Now.Year}.cache.db");
 
         var ob = new DbContextOptionsBuilder<CacheContext>();
         ob.UseLoggerFactory(lf);

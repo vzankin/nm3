@@ -1,0 +1,29 @@
+﻿<RadzenRow Visible=@Visible>
+    <RadzenColumn Size="4">
+        <RadzenRow AlignItems=AlignItems.Center class="h-100">
+            <RadzenLabel Component=@Component Text=@Label />
+        </RadzenRow>
+    </RadzenColumn>
+    <RadzenColumn>
+        <RadzenRow>@ChildContent</RadzenRow>
+        @Validator
+    </RadzenColumn>
+</RadzenRow>
+
+@code {
+
+    [Parameter, EditorRequired]
+    public required string Component { get; set; }
+
+    [Parameter]
+    public bool Visible { get; set; } = true;
+
+    [Parameter]
+    public string? Label { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public RenderFragment? Validator { get; set; }
+}

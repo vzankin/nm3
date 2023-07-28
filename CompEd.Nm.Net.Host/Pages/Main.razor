@@ -1,0 +1,50 @@
+﻿@page "/"
+
+@inject Db.MainContext DbContext
+@inject DialogService Dialog
+@inject CompEd.Nm.Net.Settings Settings
+
+<PageTitle>@L["Notification Monitor 2.0"]</PageTitle>
+
+<RadzenButton Icon="add_circle_outline" class="rz-ml-4 rz-mb-2" Text=@L["New Mailbox"] Click="@CreateMailbox" />
+<RadzenDataList @ref=datalist TItem=Db.Model.Mailbox Data=@DbContext.Mailboxes.OrderBy(x => x.Id) Density=Density.Compact>
+    <Template>
+        <MailboxDataListItem Mailbox=@context OnModify=ModifyMailbox OnDelete=DeleteMailbox />
+    </Template>
+</RadzenDataList>
+
+@code
+{
+    public required RadzenDataList<Db.Model.Mailbox> datalist;
+
+    async Task CreateMailbox()
+    {
+        var mailbox = new Db.Model.Mailbox { Name = $"mailbox{DbContext.Mailboxes.Count() + 1}", ImapHost = "" };
+        mailbox.Folder = Path.Combine(Settings.RootFolder, mailbox.Name);
+        var result = await Dialog.OpenAsync(L["New Mailbox"], ds => @<MailboxDialog Mailbox=mailbox DialogService=ds />);
+        if (result == true)
+        {
+            var entry = DbContext.Mailboxes.Add(mailbox);
+            await DbContext.SaveChangesAsync();
+            entry.State = EntityState.Detached;
+        }
+    }
+
+    async Task ModifyMailbox(Db.Model.Mailbox mailbox)
+    {
+        var result = await Dialog.OpenAsync(L["New Mailbox"], ds => @<MailboxDialog Mailbox=mailbox DialogService=ds />);
+        if (result == true)
+        {
+            var entry = DbContext.Mailboxes.Update(mailbox);
+            await DbContext.SaveChangesAsync();
+            entry.State = EntityState.Detached;
+        }
+    }
+
+    async Task DeleteMailbox(Db.Model.Mailbox mailbox)
+    {
+        var entry = DbContext.Mailboxes.Remove(mailbox);
+        await DbContext.SaveChangesAsync();
+        entry.State = EntityState.Detached;
+    }
+}

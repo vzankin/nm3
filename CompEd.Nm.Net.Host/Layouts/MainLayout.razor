@@ -1,0 +1,79 @@
+﻿@using System.Globalization
+
+@inherits LayoutComponentBase
+
+@inject IOptions<RequestLocalizationOptions> LocalizationOptions
+@inject NavigationManager Navigation
+
+<RadzenDialog />
+<RadzenNotification />
+<RadzenTooltip />
+<RadzenContextMenu />
+
+<!-- RadzenLayout is grid with two columns -->
+<!-- In 'grid-template-areas' can be specified: rz-sidebar, rz-header, rz-body, rz-footer. For <RadzenSidebar>,
+    <RadzenHeader>, <RadzenBody>, <RadzenFooter> components correspondingly.
+
+    For example:
+a)
+   'rz-sidebar rz-header'
+   'rz-sidebar rz-body'
+   'rz-footer rz-footer'
+
+   | sidebar | header |
+   |         | -------|
+   |         | body   |
+   |------------------|
+   |footer            |
+
+b)
+   'rz-header rz-header'
+   'rz-sidebar rz-body'
+
+   | header           |
+   |------------------|
+   | sidebar | body   |
+
+c) 
+   'rz-header rz-header'
+   'rz-body rz-body'
+
+   | header           |
+   |------------------|
+   | body             |
+-->
+<RadzenLayout Style="grid-template-areas: 'rz-header rz-header' 'rz-body rz-body' 'rz-footer rz-footer'';">
+    <RadzenHeader>
+        <RadzenStack Orientation=Orientation.Horizontal AlignItems=AlignItems.Center class="rz-px-4 h-100">
+            <RadzenIcon Icon="mark_email_read" Style="font-size: 24px;" />
+            <RadzenText TextStyle=TextStyle.H5 Text=@L["Notification Monitor 2.0"] class="rz-m-0 flex-grow-1" />
+            <RadzenMenu Responsive=false>
+                <!-- Root menu item: CurrentUICulture -->
+                <CultureMenuItem Culture=@CultureInfo.CurrentUICulture>
+                    <!-- Menu sub-item: from SupportedUICultures -->
+                    @foreach (var culture in LocalizationOptions.Value.SupportedUICultures!)
+                    {
+                        <CultureMenuItem Culture=@culture Selected=OnSelectCulture />
+                    }
+                </CultureMenuItem>
+            </RadzenMenu>
+        </RadzenStack>
+    </RadzenHeader>
+    <RadzenBody Style="height: 100%">
+        @Body
+    </RadzenBody>
+    <RadzenFooter class="rz-p-1">
+        <RadzenRow JustifyContent=JustifyContent.Center>
+            <RadzenText TextStyle=TextStyle.Caption TagName=TagName.Span class="rz-m-0">CompEd Software Design Srl.</RadzenText>
+        </RadzenRow>
+    </RadzenFooter>
+</RadzenLayout>
+
+@code
+{
+    void OnSelectCulture(CultureInfo culture)
+    {
+        var uri = new Uri(Navigation.Uri).GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+        Navigation.NavigateTo($"culture?culture={Uri.EscapeDataString(culture.Name)}&redirect={Uri.EscapeDataString(uri)}", forceLoad: true, replace: true);
+    }
+}
