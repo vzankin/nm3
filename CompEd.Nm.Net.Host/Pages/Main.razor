@@ -23,7 +23,7 @@
         {
             var mailbox = new Db.Model.Mailbox { Name = $"mailbox{DbContext.Mailboxes.Count() + 1}", ImapHost = "" };
             mailbox.Folder = Path.Combine(Settings.RootFolder, mailbox.Name);
-            var result = await Dialog.OpenAsync(L["New Mailbox"], ds =>@<MailboxDialog Mailbox=mailbox DialogService=ds /> );
+            var result = await Dialog.OpenAsync(L["New Mailbox"], ds =>@<MailboxDialog Mailbox=mailbox DialogService=ds NameValidator=@(name => ValidateNameCreate(name)) /> );
             if (result == true)
             {
                 // 1. Update databse
@@ -47,19 +47,21 @@
         }
     }
 
-    async Task ModifyMailbox(Db.Model.Mailbox mailbox)
+    async Task ModifyMailbox(Db.Model.Mailbox oldMailbox)
     {
         try
         {
-            var result = await Dialog.OpenAsync(L["New Mailbox"], ds =>@<MailboxDialog Mailbox=mailbox DialogService=ds />      );
+            var newMailbox = oldMailbox.Clone();
+            var result = await Dialog.OpenAsync(L["New Mailbox"], ds => @<MailboxDialog Mailbox=newMailbox DialogService=ds NameValidator=@(name => ValidateNameModify(oldMailbox, name)) />);
             if (result == true)
             {
                 // 1. Update databse
-                var entry = DbContext.Mailboxes.Update(mailbox);
+                var entry = DbContext.Mailboxes.Update(newMailbox);
                 await DbContext.SaveChangesAsync();
                 entry.State = EntityState.Detached;
                 // 2. Restart mailbox monitor
-                await Monitors.RestartMonitor(mailbox);
+                await Monitors.DeleteMonitor(oldMailbox);
+                await Monitors.CreateMonitor(newMailbox);
             }
         }
         catch (Exception e)
@@ -98,4 +100,13 @@
             Notification.Notify(msg);
         }
     }
+
+    // returns true if there is no another mailbox with such name
+    bool ValidateNameCreate(string name) =>
+        !DbContext.Mailboxes.Any(x => x.Name == name);
+
+    // returns true if name not changed,
+    // if name has chaged then returns true if there is no another mailbox with such name
+    bool ValidateNameModify(Db.Model.Mailbox oldMailbox, string name) =>
+        name == oldMailbox.Name || !DbContext.Mailboxes.Any(x => x.Name == name);
 }

@@ -37,4 +37,7 @@ public class Mailbox
 
     [Column("folder")]
     public string? Folder { get; set; }
+
+    public Mailbox Clone() =>
+        (Mailbox)(this.MemberwiseClone());
 }

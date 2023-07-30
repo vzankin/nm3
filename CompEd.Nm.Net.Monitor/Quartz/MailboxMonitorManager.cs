@@ -10,7 +10,7 @@ public class MailboxMonitorManager : BackgroundService
     private readonly IServiceProvider sp;
     private readonly ISchedulerFactory sf;
     private readonly ILogger? log;
-    private readonly Dictionary<string, MailboxMonitor> monitors = new();
+    private readonly Dictionary<int, MailboxMonitor> monitors = new();
 
     public MailboxMonitorManager(IServiceProvider sp, ISchedulerFactory sf, ILogger<MailboxMonitorManager>? log)
     {
@@ -32,21 +32,15 @@ public class MailboxMonitorManager : BackgroundService
     public async Task CreateMonitor(Db.Model.Mailbox mailbox, CancellationToken ct = default)
     {
         log?.LogInformation("create scheduler jobs for '{mailbox}'", mailbox.Name);
-        monitors[mailbox.Name] = await MailboxMonitor.Create(sf, mailbox, ct);
+        monitors[mailbox.Id] = await MailboxMonitor.Create(sf, mailbox, ct);
     }
 
     public async Task DeleteMonitor(Db.Model.Mailbox mailbox, CancellationToken ct = default)
     {
-        if (monitors.Remove(mailbox.Name, out var monitor))
+        if (monitors.Remove(mailbox.Id, out var monitor))
         {
             log?.LogInformation("delete scheduler jobs for '{mailbox}'", mailbox.Name);
             await monitor.DisposeAsync();
         }
-    }
-
-    public async Task RestartMonitor(Db.Model.Mailbox mailbox, CancellationToken ct = default)
-    {
-        await DeleteMonitor(mailbox, ct);
-        await CreateMonitor(mailbox, ct);
     }
 }

@@ -1,5 +1,5 @@
 ﻿<RadzenTemplateForm TItem=Db.Model.Mailbox Data=@Mailbox Submit=@(() => DialogService.Close(true))>
-    <RadzenFieldset class="rz-mb-4">
+    <RadzenFieldset Text=@L["General"] class="rz-mb-4">
         <RadzenStack Gap="1rem">
             <!-- Name -->
             <FormField Component="Name" Label=@L["Name"]>
@@ -8,8 +8,17 @@
                 </ChildContent>
                 <Validator>
                     <RadzenRequiredValidator Component="Name" Text=@L["Required"] Popup Style="z-index: 1080;" />
+                    <RadzenCustomValidator Component="Name" Text=@L["The name must be unique"] Popup Style="z-index: 1080;" Validator=@(() => NameValidator?.Invoke(Mailbox.Name) ?? true) />
                 </Validator>
             </FormField>
+            <!-- Cache Folder -->
+            <FormField Component="Path" Label=@L["Cache Folder"]>
+                <RadzenTextBox Name="Path" @bind-Value=@Mailbox.Folder class="w-100" />
+            </FormField>
+        </RadzenStack>
+    </RadzenFieldset>
+    <RadzenFieldset Text=@L["IMAP"] class="rz-mb-4">
+        <RadzenStack Gap="1rem">
             <!-- Host -->
             <FormField Component="Host" Label=@L["Host"]>
                 <ChildContent>
@@ -36,10 +45,12 @@
             <FormField Component="Pass" Label=@L["Password"]>
                 <RadzenPassword Name="Pass" @bind-Value=@Mailbox.ImapPassword class="w-100" />
             </FormField>
-            <!-- Cache Folder -->
-            <FormField Component="Path" Label=@L["Cache Folder"]>
-                <RadzenTextBox Name="Path" @bind-Value=@Mailbox.Folder class="w-100" />
-            </FormField>
+            <!-- Verify -->
+            <RadzenButton Variant=Variant.Outlined ButtonType=ButtonType.Button Text=@L["Verify"] class="rz-ripple rz-text-secondary-color" Click=@OnVerifyClick />
+        </RadzenStack>
+    </RadzenFieldset>
+    <RadzenFieldset Text=@L["Scheduler"] class="rz-mb-4">
+        <RadzenStack Gap="1rem">
             <!-- Watching Enabled -->
             <RadzenRow AlignItems=AlignItems.Center>
                 <RadzenCheckBox @bind-Value=@Mailbox.IsWatchEnabled Name="IsWatchEnabled" />
@@ -59,8 +70,8 @@
         </RadzenStack>
     </RadzenFieldset>
     <RadzenStack Orientation=Orientation.Horizontal JustifyContent=JustifyContent.End Gap="0">
-        <RadzenButton Variant=Variant.Text ButtonType="ButtonType.Submit" Text=@L["OK"] class="rz-ripple" />
-        <RadzenButton Variant=Variant.Text ButtonType ="ButtonType.Button" Text=@L["Cancel"] class="rz-text-secondary-color" Click=@(() => DialogService.Close(false)) />
+        <RadzenButton Variant=Variant.Text ButtonType=ButtonType.Submit Text=@L["OK"] class="rz-ripple" />
+        <RadzenButton Variant=Variant.Text ButtonType=ButtonType.Button Text=@L["Cancel"] class="rz-text-secondary-color" Click=@(() => DialogService.Close(false)) />
     </RadzenStack>
 </RadzenTemplateForm>
 
@@ -72,12 +83,39 @@
     [Parameter, EditorRequired]
     public required Db.Model.Mailbox Mailbox { get; set; }
 
+    [Parameter]
+    public Func<string, bool>? NameValidator { get; set; }
+
     [Inject]
     public required Settings Settings { get; set; }
+
+    [Inject]
+    public required IServiceProvider Services { get; set; }
 
     void OnNameChange(string value)
     {
         var root = Path.GetDirectoryName(Mailbox.Folder) ?? Settings.RootFolder;
         Mailbox.Folder = Path.Combine(root, value);
+    }
+
+    async Task OnVerifyClick()
+    {
+        try
+        {
+            using var imap = Services.GetRequiredService<MailKit.Net.Imap.ImapClient>();
+            if (!imap.IsConnected)
+                await imap.ConnectAsync(Mailbox.ImapHost, Mailbox.ImapPort ?? 993, true);
+            if (imap.Capabilities.HasFlag(MailKit.Net.Imap.ImapCapabilities.Compress))
+                await imap.CompressAsync();
+            if (!imap.IsAuthenticated)
+                await imap.AuthenticateAsync(Mailbox.ImapUsername, Mailbox.ImapPassword);
+            if (!imap.Inbox.IsOpen)
+                await imap.Inbox.OpenAsync(MailKit.FolderAccess.ReadOnly);
+            await DialogService.Alert(L["Settings are valid"], L["IMAP Settings"], new AlertOptions() { OkButtonText = L["OK"] });
+        }
+        catch (Exception e)
+        {
+            await DialogService.Alert(e.Message, L["IMAP Settings"], new AlertOptions() { OkButtonText = L["OK"] });
+        }
     }
 }
