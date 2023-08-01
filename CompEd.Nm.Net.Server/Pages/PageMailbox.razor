@@ -14,7 +14,7 @@
     public int Id { get; set; }
 
     public required Db.Model.Mailbox Mailbox { get; set; }
-    public Db.Model.Cache? Info { get; set; }
+    public Db.Model.CacheInfo? Info { get; set; }
     public required Db.CacheContext Cache { get; set; }
 
     protected override async Task OnInitializedAsync()

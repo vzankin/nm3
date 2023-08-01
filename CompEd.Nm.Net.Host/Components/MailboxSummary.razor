@@ -1,0 +1,11 @@
+﻿<RadzenText TextStyle=TextStyle.H6 Text=@(Mailbox.Name) class="rz-color-info"/>
+<RadzenText TextStyle=TextStyle.Caption Text=@($"{L["Last check"]}: {Cache.Info.OrderBy(x => x.Id).FirstOrDefault()?.LastCheck.ToLocalTime()}")/>
+
+@code
+{
+    [Parameter, EditorRequired]
+    public required Db.Model.Mailbox Mailbox { get; set; }
+
+    [Parameter, EditorRequired]
+    public required Db.CacheContext Cache { get; set; }
+}

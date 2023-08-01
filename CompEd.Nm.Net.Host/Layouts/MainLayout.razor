@@ -44,20 +44,28 @@ c)
 -->
 <RadzenLayout Style="grid-template-areas: 'rz-header rz-header' 'rz-body rz-body' 'rz-footer rz-footer'';">
     <RadzenHeader>
-        <RadzenStack Orientation=Orientation.Horizontal AlignItems=AlignItems.Center class="rz-px-4 h-100">
-            <RadzenIcon Icon="mark_email_read" Style="font-size: 24px;" />
-            <RadzenText TextStyle=TextStyle.H5 Text=@L["Notification Monitor 2.0"] class="rz-m-0 flex-grow-1" />
-            <RadzenMenu Responsive=false>
-                <!-- Root menu item: CurrentUICulture -->
-                <CultureMenuItem Culture=@CultureInfo.CurrentUICulture>
-                    <!-- Menu sub-item: from SupportedUICultures -->
-                    @foreach (var culture in LocalizationOptions.Value.SupportedUICultures!)
-                    {
-                        <CultureMenuItem Culture=@culture Selected=OnSelectCulture />
-                    }
-                </CultureMenuItem>
-            </RadzenMenu>
-        </RadzenStack>
+        <RadzenRow class="rz-px-4 h-100">
+            <RadzenColumn Size="6">
+                <RadzenRow AlignItems=AlignItems.Center JustifyContent=JustifyContent.Start class="h-100" onclick=@(() => Navigation.NavigateTo("")) Style="cursor: pointer;">
+                    <RadzenIcon Icon="mark_email_read" Style="font-size: 24px;" />
+                    <RadzenText TextStyle=TextStyle.H5 Text=@L["Notification Monitor 2.0"] class="rz-m-0" />
+                </RadzenRow>
+            </RadzenColumn>
+            <RadzenColumn Size="6">
+                <RadzenRow AlignItems=AlignItems.Center JustifyContent=JustifyContent.End class="h-100">
+                    <RadzenMenu Responsive=false>
+                        <!-- Root menu item: CurrentUICulture -->
+                        <CultureMenuItem Culture=@CultureInfo.CurrentUICulture>
+                            <!-- Menu sub-item: from SupportedUICultures -->
+                            @foreach (var culture in LocalizationOptions.Value.SupportedUICultures!)
+                            {
+                                <CultureMenuItem Culture=@culture Selected=OnSelectCulture />
+                            }
+                        </CultureMenuItem>
+                    </RadzenMenu>
+                </RadzenRow>
+            </RadzenColumn>
+        </RadzenRow>
     </RadzenHeader>
     <RadzenBody class="h-100">
         @Body

@@ -12,7 +12,7 @@
                 </Validator>
             </FormField>
             <!-- Cache Folder -->
-            <FormField Component="Path" Label=@L["Cache Folder"]>
+            <FormField Component="Path" Label=@L["Folder"]>
                 <RadzenTextBox Name="Path" @bind-Value=@Mailbox.Folder class="w-100" />
             </FormField>
         </RadzenStack>
@@ -62,7 +62,7 @@
                 <RadzenLabel Text=@L["Cleaning enabled"] Component="IsCleanEnabled" />
             </RadzenRow>
             <!-- Clean Age -->
-            <FormField Component="CleanAge" Label=@L["Clean Older Than (days)"]>
+            <FormField Component="CleanAge" Label=@L["Clean older than (in days)"]>
                 <ChildContent>
                     <RadzenNumeric Name="CleanAge" ShowUpDown=false @bind-Value=@Mailbox.CleanOlderThan class="w-100" Disabled=@(!Mailbox.IsCleanEnabled) />
                 </ChildContent>

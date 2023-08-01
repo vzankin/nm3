@@ -25,7 +25,7 @@ public partial class PageMailbox : IDisposable
 
     public required Mailbox Mailbox { get; set; }
     public required CacheContext Cache { get; set; }
-    public Cache? Info { get; set; }
+    public CacheInfo? Info { get; set; }
 
     protected override async Task OnInitializedAsync()
     {

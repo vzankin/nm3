@@ -1,8 +1,39 @@
 ﻿@page "/mailbox/{id:int}"
+@implements IAsyncDisposable
 
-<h3>Mailbox</h3>
+@inject Db.MainContext DbContext
+@inject Db.CacheContextFactory CacheFactory
+
+<PageTitle>@mailbox.Name</PageTitle>
+
+<RadzenTabs TabPosition=TabPosition.Top RenderMode=TabRenderMode.Server class="h-100">
+    <Tabs>
+        <RadzenTabsItem Text=@L["Summary"]>
+            <MailboxSummary Mailbox=@mailbox Cache=@cache/>
+        </RadzenTabsItem>
+        <RadzenTabsItem Text=@L["Mails"]>
+        </RadzenTabsItem>
+        <RadzenTabsItem Text=@L["Log"]>
+        </RadzenTabsItem>
+    </Tabs>
+</RadzenTabs>
 
 @code {
     [Parameter]
     public int Id { get; set; }
+
+    Db.Model.Mailbox mailbox = default!;
+    Db.CacheContext cache = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        mailbox = DbContext.Mailboxes.Single(x => x.Id == Id);
+        cache = await CacheFactory.CreateCacheContext(mailbox, default).ConfigureAwait(false);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await cache.DisposeAsync();
+        GC.SuppressFinalize(this);
+    }
 }

@@ -37,7 +37,7 @@ internal partial class MailboxJobCheck : MailboxJob
         using var cache = await cf.CreateCacheContext(Monitor.Mailbox, ctx.CancellationToken).ConfigureAwait(false);
 
         // 3. invalidate UIDs
-        var cacheInfo = cache.Cache.OrderBy(x => x.Id).FirstOrDefault();
+        var cacheInfo = cache.Info.OrderBy(x => x.Id).FirstOrDefault();
         if (cacheInfo?.Validity != imap.Inbox.UidValidity)
         {
             await cache.Mails
@@ -51,7 +51,7 @@ internal partial class MailboxJobCheck : MailboxJob
         cacheInfo ??= new();
         cacheInfo.Validity = imap.Inbox.UidValidity;
         cacheInfo.LastCheck = DateTime.UtcNow;
-        cache.Cache.Update(cacheInfo);
+        cache.Info.Update(cacheInfo);
         await cache.SaveChangesAsync(ctx.CancellationToken).ConfigureAwait(false);
 
         // 5. get local UIDs
