@@ -21,7 +21,7 @@
     {
         Mailbox = Db.Mailboxes.Single(x => x.Id == Id);
         Cache = await CacheFactory.CreateCacheContext(Mailbox, default).ConfigureAwait(false);
-        Info = await Cache.Cache.OrderBy(x => x.Id).FirstOrDefaultAsync().ConfigureAwait(false);
+        Info = await Cache.Info.OrderBy(x => x.Id).FirstOrDefaultAsync().ConfigureAwait(false);
     }
 
     public void Dispose()

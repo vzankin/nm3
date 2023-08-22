@@ -95,3 +95,7 @@ a {
 .rz-notification-message.rz-growl {
     width: 480px !important;
 }
+
+.rz-tabview-panel {
+    height: 100%;
+}

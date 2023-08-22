@@ -104,6 +104,7 @@ internal partial class MailboxJobCheck : MailboxJob
             {
                 await DownloadSdi(folder, mail, ctx.CancellationToken).ConfigureAwait(false);
                 log?.LogInformation("{mailbox}: '{sbj}' downloaded. [{sdiId}:{sdiType}]", Monitor.Mailbox.Name, mail.Subject, mail.SdiId, mail.SdiType);
+                mail.IsDownloaded = true;
             }
 
             // 10.4 Download PEC notifications only for outgoing mails that presents in cache (i.e. for sent EC mail)
@@ -111,6 +112,7 @@ internal partial class MailboxJobCheck : MailboxJob
             {
                 await DownloadPec(folder, mail, ctx.CancellationToken).ConfigureAwait(false);
                 log?.LogInformation("{mailbox}: '{sbj}' downloaded. [{pecId}:{pecType}]", Monitor.Mailbox.Name, mail.Subject, mail.PecId, mail.PecType);
+                mail.IsDownloaded = true;
             }
 
             // 10.5 insert Mail records batch

@@ -15,7 +15,7 @@ public class CacheContextFactory
         this.lf = lf;
     }
 
-    public async Task<CacheContext> CreateCacheContext(Model.Mailbox mailbox, CancellationToken ct)
+    public async Task<CacheContext> CreateCacheContext(Model.Mailbox mailbox, CancellationToken ct = default)
     {
         var csb = new SqliteConnectionStringBuilder();
         var folder = mailbox.Folder ?? Path.Combine(settings.RootFolder, mailbox.Name);

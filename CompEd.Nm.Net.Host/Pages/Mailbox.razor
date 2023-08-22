@@ -1,39 +1,48 @@
-﻿@page "/mailbox/{id:int}"
-@implements IAsyncDisposable
+﻿@page "/mailbox/{id:int}/{tab:int?}"
+@implements IDisposable
 
 @inject Db.MainContext DbContext
 @inject Db.CacheContextFactory CacheFactory
 
 <PageTitle>@mailbox.Name</PageTitle>
 
-<RadzenTabs TabPosition=TabPosition.Top RenderMode=TabRenderMode.Server class="h-100">
-    <Tabs>
-        <RadzenTabsItem Text=@L["Summary"]>
-            <MailboxSummary Mailbox=@mailbox Cache=@cache/>
-        </RadzenTabsItem>
-        <RadzenTabsItem Text=@L["Mails"]>
-        </RadzenTabsItem>
-        <RadzenTabsItem Text=@L["Log"]>
-        </RadzenTabsItem>
-    </Tabs>
-</RadzenTabs>
+<RadzenStack class="h-100" Gap=0>
+    <RadzenText TextStyle=TextStyle.H6 Text=@(mailbox.Name.ToUpper()) class="rz-color-primary" />
+    <RadzenText TextStyle=TextStyle.Subtitle2 Text=@($"{L["Last check"]}: {cacheInfo?.LastCheck.ToLocalTime()}") />
+    <RadzenTabs TabPosition=TabPosition.Top RenderMode=TabRenderMode.Server SelectedIndex=@Tab class="flex-grow-1 overflow-hidden">
+        <Tabs>
+            <RadzenTabsItem Text=@L["Summary"]>
+                <MailboxSummary Mailbox=@mailbox/>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text=@L["Mails"]>
+                <MailboxMails Mailbox=@mailbox />
+            </RadzenTabsItem>
+            <RadzenTabsItem Text=@L["Activity"]>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text=@L["Log"]>
+            </RadzenTabsItem>
+        </Tabs>
+    </RadzenTabs>
+</RadzenStack>
 
 @code {
     [Parameter]
     public int Id { get; set; }
 
+    [Parameter]
+    public int Tab { get; set; }
+
     Db.Model.Mailbox mailbox = default!;
-    Db.CacheContext cache = default!;
+    Db.Model.CacheInfo? cacheInfo;
 
     protected override async Task OnInitializedAsync()
     {
-        mailbox = DbContext.Mailboxes.Single(x => x.Id == Id);
-        cache = await CacheFactory.CreateCacheContext(mailbox, default).ConfigureAwait(false);
+        await base.OnInitializedAsync();
+        mailbox = await DbContext.Mailboxes.SingleAsync(x => x.Id == Id);
+        using var cache = await CacheFactory.CreateCacheContext(mailbox, default).ConfigureAwait(false);
+        cacheInfo = await cache.Info.OrderBy(x => x.Id).FirstOrDefaultAsync();
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await cache.DisposeAsync();
-        GC.SuppressFinalize(this);
-    }
+    public void Dispose() =>
+        GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, true, true);
 }

@@ -42,4 +42,7 @@ public class Mail
 
     [Column("sdi_id")]
     public string? SdiId { get; set; }
+
+    [Column("downloaded")]
+    public bool IsDownloaded { get; set; } = false;
 }

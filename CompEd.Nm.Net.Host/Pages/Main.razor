@@ -52,7 +52,7 @@
         try
         {
             var newMailbox = oldMailbox.Clone();
-            var result = await Dialog.OpenAsync(L["New Mailbox"], ds => @<MailboxDialog Mailbox=newMailbox DialogService=ds NameValidator=@(name => ValidateNameModify(oldMailbox, name)) />);
+            var result = await Dialog.OpenAsync(L["Edit Mailbox"], ds => @<MailboxDialog Mailbox=newMailbox DialogService=ds NameValidator=@(name => ValidateNameModify(oldMailbox, name)) />);
             if (result == true)
             {
                 // 1. Update databse
@@ -103,10 +103,11 @@
 
     // returns true if there is no another mailbox with such name
     bool ValidateNameCreate(string name) =>
-        !DbContext.Mailboxes.Any(x => x.Name == name);
+        !DbContext.Mailboxes.Any(x => string.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase));
 
-    // returns true if name not changed,
-    // if name has chaged then returns true if there is no another mailbox with such name
-    bool ValidateNameModify(Db.Model.Mailbox oldMailbox, string name) =>
-        name == oldMailbox.Name || !DbContext.Mailboxes.Any(x => x.Name == name);
+    // returns true if:
+    // a) name not changed
+    // b) if name has chaged then returns true if there is no another mailbox with such name
+    bool ValidateNameModify(Db.Model.Mailbox mailbox, string name) =>
+        string.Equals(mailbox.Name, name, StringComparison.OrdinalIgnoreCase) || !DbContext.Mailboxes.Any(x => string.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase));
 }

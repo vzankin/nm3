@@ -1,0 +1,74 @@
+﻿@using System.Linq.Dynamic.Core
+@using Microsoft.EntityFrameworkCore
+
+@inject Db.CacheContextFactory CacheFactory
+
+<RadzenDataGrid TItem=Db.Model.Mail Data=@mails Count=@count LoadData=@OnLoadData IsLoading=@isLoading
+    AllowVirtualization=true
+    VirtualizationOverscanCount=20
+    AllowPaging=false
+    AllowSorting=true
+    AllowFiltering=true
+    AllowColumnResize=true
+    AllowColumnPicking=true
+    AllowColumnReorder=true
+    class="h-100">
+    <Columns>
+        <RadzenDataGridColumn TItem=Db.Model.Mail Property="Uid" Width="2.4rem" Sortable=false Filterable=false Reorderable=false Resizable=false Pickable=false>
+            <Template Context=mail>
+                <RadzenIcon Icon=@(mail.Uid.HasValue ? "mark_email_read" : "unsubscribe") class=@(mail.IsDownloaded ? "rz-color-primary" : "rz-color-secondary") />
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem=Db.Model.Mail Property="Id" Title=@L["ID"] Width="5rem" Visible=false />
+        <RadzenDataGridColumn TItem=Db.Model.Mail Property="Date" Title=@L["Date"] Width="9rem" SortOrder=SortOrder.Descending />
+        <RadzenDataGridColumn TItem=Db.Model.Mail Property="From" Title=@L["From"] Width="16rem" />
+        <RadzenDataGridColumn TItem=Db.Model.Mail Property="Subject" Title=@L["Subject"]/>
+        <RadzenDataGridColumn TItem=Db.Model.Mail Property="PecType" Title=@L["PEC"] Width="8rem" Visible=false />
+        <RadzenDataGridColumn TItem=Db.Model.Mail Property="PecId" Title=@L["PEC ID"] Width="10rem" Visible=false />
+        <RadzenDataGridColumn TItem=Db.Model.Mail Property="SdiType" Title=@L["SdI"] Width="8rem" Visible=false />
+        <RadzenDataGridColumn TItem=Db.Model.Mail Property="SdiId" Title=@L["SdI ID"] Width="10rem" Visible=false />
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    [Parameter, EditorRequired]
+    public required Db.Model.Mailbox Mailbox { get; set; }
+
+    bool isLoading = false;
+    int count;
+    IEnumerable<Db.Model.Mail>? mails;
+
+    async Task OnLoadData(LoadDataArgs args)
+    {
+        isLoading = true;
+        try
+        {
+            using (var db = await CacheFactory.CreateCacheContext(Mailbox))
+            {
+                var query = db.Mails.AsQueryable();
+
+                if (!string.IsNullOrEmpty(args.Filter))
+                    query = query.Where(args.Filter);
+
+                count = query.Count();
+
+                if (!string.IsNullOrEmpty(args.OrderBy))
+                    query = query.OrderBy(args.OrderBy);
+                else
+                    query = query.OrderBy(x => x.Id);
+
+                if (args.Skip.HasValue)
+                    query = query.Skip(args.Skip.Value);
+                if (args.Top.HasValue)
+                    query = query.Take(args.Top.Value);
+
+                mails = query.ToArray();
+            }
+        }
+        finally
+        {
+            GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, true, true);
+            isLoading = false;
+        }
+    }
+}

@@ -1,11 +1,60 @@
-﻿<RadzenText TextStyle=TextStyle.H6 Text=@(Mailbox.Name) class="rz-color-info"/>
-<RadzenText TextStyle=TextStyle.Caption Text=@($"{L["Last check"]}: {Cache.Info.OrderBy(x => x.Id).FirstOrDefault()?.LastCheck.ToLocalTime()}")/>
+﻿@implements IAsyncDisposable
+
+@inject Db.CacheContextFactory CacheFactory
+
+<RadzenScheduler TItem=MailSchedulerModel
+    TodayText=@L["Today"]
+    SlotRender=@OnSlotRender
+    AppointmentRender=@OnAppointmentRender
+    StartProperty="Date"
+    EndProperty="Date"
+    TextProperty="Description"
+    Data=@items
+    LoadData=@OnLoadData
+    SelectedIndex=2
+    class="h-100">
+    <RadzenDayView Text=@L["Day"] />
+    <RadzenWeekView Text=@L["Week"] />
+    <RadzenMonthView Text=@L["Month"] MoreText=@L["+ {0} more"] MaxAppointmentsInSlot=2 />
+    <RadzenYearPlannerView Text=@L["Year"] MoreText=@L["+ {0} more"] />
+</RadzenScheduler>
 
 @code
 {
     [Parameter, EditorRequired]
     public required Db.Model.Mailbox Mailbox { get; set; }
 
-    [Parameter, EditorRequired]
-    public required Db.CacheContext Cache { get; set; }
+    Db.CacheContext cache = default!;
+    IEnumerable<MailSchedulerModel>? items;
+
+    override protected async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        cache = await CacheFactory.CreateCacheContext(Mailbox);
+    }
+
+    async Task OnLoadData(SchedulerLoadDataEventArgs args)
+    {
+        var utcStart = args.Start.ToUniversalTime();
+        var utcEnd = args.End.ToUniversalTime();
+        items = await cache.Mails.Where(x => x.Date.HasValue && (x.Date >= utcStart && x.Date <= utcEnd)).Select(x => new MailSchedulerModel(x.Date!.Value.ToLocalTime(), x.Subject)).ToListAsync();
+    }
+
+    void OnSlotRender(SchedulerSlotRenderEventArgs args)
+    {
+        // Highlight today in month and year views
+        if ((args.View.Text == L["Month"] || args.View.Text == L["Year"]) && args.Start.Date == DateTime.Today)
+            args.Attributes["class"] = "rz-background-color-primary rz-color-on-primary";
+    }
+
+    void OnAppointmentRender(SchedulerAppointmentRenderEventArgs<MailSchedulerModel> args)
+    {
+        args.Attributes["style"] = "background: var(--rz-secondary);";
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await cache.DisposeAsync();
+        GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, true, true);
+    }
 }
