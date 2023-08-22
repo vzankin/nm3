@@ -3,17 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompEd.Nm.Net.Blazor", "CompEd.Nm.Net.Blazor\CompEd.Nm.Net.Blazor.csproj", "{2F254E67-0862-4E9F-B583-75192A0A7897}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompEd.Nm.Net.Mud", "CompEd.Nm.Net.Mud\CompEd.Nm.Net.Mud.csproj", "{079F7BB7-D492-438D-9CBE-A859C7E5FDE6}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompEd.Nm.Net.Monitor", "CompEd.Nm.Net.Monitor\CompEd.Nm.Net.Monitor.csproj", "{60494ADC-E4A2-40AE-B9CD-9B76CD52C341}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompEd.Nm.Net.Server", "CompEd.Nm.Net.Server\CompEd.Nm.Net.Server.csproj", "{5478EDF8-3A91-472C-B00D-6DDD72AF925B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompEd.Nm.Net.Blazorise", "CompEd.Nm.Net.Blazorise\CompEd.Nm.Net.Blazorise\CompEd.Nm.Net.Blazorise.csproj", "{36275649-5FAE-4A10-9601-C969FFF5EA79}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompEd.Nm.Net.Host", "CompEd.Nm.Net.Host\CompEd.Nm.Net.Host.csproj", "{A752959A-09EA-47E1-BD51-E663DEAD1890}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompEd.Nm.Net.Host", "CompEd.Nm.Net.Host\CompEd.Nm.Net.Host.csproj", "{A752959A-09EA-47E1-BD51-E663DEAD1890}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,30 +17,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2F254E67-0862-4E9F-B583-75192A0A7897}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2F254E67-0862-4E9F-B583-75192A0A7897}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2F254E67-0862-4E9F-B583-75192A0A7897}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{2F254E67-0862-4E9F-B583-75192A0A7897}.Debug|x64.Build.0 = Debug|Any CPU
-		{2F254E67-0862-4E9F-B583-75192A0A7897}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{2F254E67-0862-4E9F-B583-75192A0A7897}.Debug|x86.Build.0 = Debug|Any CPU
-		{2F254E67-0862-4E9F-B583-75192A0A7897}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2F254E67-0862-4E9F-B583-75192A0A7897}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2F254E67-0862-4E9F-B583-75192A0A7897}.Release|x64.ActiveCfg = Release|Any CPU
-		{2F254E67-0862-4E9F-B583-75192A0A7897}.Release|x64.Build.0 = Release|Any CPU
-		{2F254E67-0862-4E9F-B583-75192A0A7897}.Release|x86.ActiveCfg = Release|Any CPU
-		{2F254E67-0862-4E9F-B583-75192A0A7897}.Release|x86.Build.0 = Release|Any CPU
-		{079F7BB7-D492-438D-9CBE-A859C7E5FDE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{079F7BB7-D492-438D-9CBE-A859C7E5FDE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{079F7BB7-D492-438D-9CBE-A859C7E5FDE6}.Debug|x64.ActiveCfg = Debug|x64
-		{079F7BB7-D492-438D-9CBE-A859C7E5FDE6}.Debug|x64.Build.0 = Debug|x64
-		{079F7BB7-D492-438D-9CBE-A859C7E5FDE6}.Debug|x86.ActiveCfg = Debug|x86
-		{079F7BB7-D492-438D-9CBE-A859C7E5FDE6}.Debug|x86.Build.0 = Debug|x86
-		{079F7BB7-D492-438D-9CBE-A859C7E5FDE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{079F7BB7-D492-438D-9CBE-A859C7E5FDE6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{079F7BB7-D492-438D-9CBE-A859C7E5FDE6}.Release|x64.ActiveCfg = Release|x64
-		{079F7BB7-D492-438D-9CBE-A859C7E5FDE6}.Release|x64.Build.0 = Release|x64
-		{079F7BB7-D492-438D-9CBE-A859C7E5FDE6}.Release|x86.ActiveCfg = Release|x86
-		{079F7BB7-D492-438D-9CBE-A859C7E5FDE6}.Release|x86.Build.0 = Release|x86
 		{60494ADC-E4A2-40AE-B9CD-9B76CD52C341}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{60494ADC-E4A2-40AE-B9CD-9B76CD52C341}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60494ADC-E4A2-40AE-B9CD-9B76CD52C341}.Debug|x64.ActiveCfg = Debug|x64
@@ -61,30 +29,6 @@ Global
 		{60494ADC-E4A2-40AE-B9CD-9B76CD52C341}.Release|x64.Build.0 = Release|x64
 		{60494ADC-E4A2-40AE-B9CD-9B76CD52C341}.Release|x86.ActiveCfg = Release|x86
 		{60494ADC-E4A2-40AE-B9CD-9B76CD52C341}.Release|x86.Build.0 = Release|x86
-		{5478EDF8-3A91-472C-B00D-6DDD72AF925B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5478EDF8-3A91-472C-B00D-6DDD72AF925B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5478EDF8-3A91-472C-B00D-6DDD72AF925B}.Debug|x64.ActiveCfg = Debug|x64
-		{5478EDF8-3A91-472C-B00D-6DDD72AF925B}.Debug|x64.Build.0 = Debug|x64
-		{5478EDF8-3A91-472C-B00D-6DDD72AF925B}.Debug|x86.ActiveCfg = Debug|x86
-		{5478EDF8-3A91-472C-B00D-6DDD72AF925B}.Debug|x86.Build.0 = Debug|x86
-		{5478EDF8-3A91-472C-B00D-6DDD72AF925B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5478EDF8-3A91-472C-B00D-6DDD72AF925B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5478EDF8-3A91-472C-B00D-6DDD72AF925B}.Release|x64.ActiveCfg = Release|x64
-		{5478EDF8-3A91-472C-B00D-6DDD72AF925B}.Release|x64.Build.0 = Release|x64
-		{5478EDF8-3A91-472C-B00D-6DDD72AF925B}.Release|x86.ActiveCfg = Release|x86
-		{5478EDF8-3A91-472C-B00D-6DDD72AF925B}.Release|x86.Build.0 = Release|x86
-		{36275649-5FAE-4A10-9601-C969FFF5EA79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{36275649-5FAE-4A10-9601-C969FFF5EA79}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{36275649-5FAE-4A10-9601-C969FFF5EA79}.Debug|x64.ActiveCfg = Debug|x64
-		{36275649-5FAE-4A10-9601-C969FFF5EA79}.Debug|x64.Build.0 = Debug|x64
-		{36275649-5FAE-4A10-9601-C969FFF5EA79}.Debug|x86.ActiveCfg = Debug|x86
-		{36275649-5FAE-4A10-9601-C969FFF5EA79}.Debug|x86.Build.0 = Debug|x86
-		{36275649-5FAE-4A10-9601-C969FFF5EA79}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{36275649-5FAE-4A10-9601-C969FFF5EA79}.Release|Any CPU.Build.0 = Release|Any CPU
-		{36275649-5FAE-4A10-9601-C969FFF5EA79}.Release|x64.ActiveCfg = Release|x64
-		{36275649-5FAE-4A10-9601-C969FFF5EA79}.Release|x64.Build.0 = Release|x64
-		{36275649-5FAE-4A10-9601-C969FFF5EA79}.Release|x86.ActiveCfg = Release|x86
-		{36275649-5FAE-4A10-9601-C969FFF5EA79}.Release|x86.Build.0 = Release|x86
 		{A752959A-09EA-47E1-BD51-E663DEAD1890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A752959A-09EA-47E1-BD51-E663DEAD1890}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A752959A-09EA-47E1-BD51-E663DEAD1890}.Debug|x64.ActiveCfg = Debug|x64
