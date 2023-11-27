@@ -103,11 +103,11 @@
 
     // returns true if there is no another mailbox with such name
     bool ValidateNameCreate(string name) =>
-        !DbContext.Mailboxes.Any(x => string.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase));
+        !DbContext.Mailboxes.Any(x => string.Equals(x.Name, name));
 
     // returns true if:
     // a) name not changed
     // b) if name has chaged then returns true if there is no another mailbox with such name
     bool ValidateNameModify(Db.Model.Mailbox mailbox, string name) =>
-        string.Equals(mailbox.Name, name, StringComparison.OrdinalIgnoreCase) || !DbContext.Mailboxes.Any(x => string.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase));
+        string.Equals(mailbox.Name, name) || !DbContext.Mailboxes.Any(x => string.Equals(x.Name, name));
 }
